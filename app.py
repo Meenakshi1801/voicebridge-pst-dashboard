@@ -66,374 +66,94 @@ REQUIRED_COLUMNS = [
 
 TASK_BANK = {
     "Pedagogy of Mathematics": [
-        {
-            "Task_ID": "MATH-01",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A Class VI student says: “A larger denominator means a larger fraction.” How will you respond as a teacher?"
-        },
-        {
-            "Task_ID": "MATH-02",
-            "Task_Category": "Error Analysis",
-            "Prompt": "A student solves 3x + 5 = 20 as 3x = 25. How will you identify and address this error?"
-        },
-        {
-            "Task_ID": "MATH-03",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you introduce the concept of perimeter using examples from students’ daily life?"
-        },
-        {
-            "Task_ID": "MATH-04",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you explain the difference between area and perimeter to Class VII students?"
-        },
-        {
-            "Task_ID": "MATH-05",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "After teaching equivalent fractions, how would you check whether students have understood the concept?"
-        },
-        {
-            "Task_ID": "MATH-06",
-            "Task_Category": "Inclusive Adaptation",
-            "Prompt": "How would you adapt a geometry activity for a learner who has difficulty drawing diagrams?"
-        },
-        {
-            "Task_ID": "MATH-07",
-            "Task_Category": "Short Activity Design",
-            "Prompt": "Suggest a short classroom activity to teach place value to middle-school students."
-        },
-        {
-            "Task_ID": "MATH-08",
-            "Task_Category": "Classroom Engagement",
-            "Prompt": "Students are afraid of solving algebra questions on the board. What will you do?"
-        },
-        {
-            "Task_ID": "MATH-09",
-            "Task_Category": "Use of Example / Analogy",
-            "Prompt": "How would you explain ratio using examples from daily life?"
-        },
-        {
-            "Task_ID": "MATH-10",
-            "Task_Category": "Error Analysis",
-            "Prompt": "A student thinks 0.5 is smaller than 0.25 because 5 is smaller than 25. How will you respond?"
-        }
+        {"Task_ID": "MATH-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VI student says: “A larger denominator means a larger fraction.” How will you respond as a teacher?"},
+        {"Task_ID": "MATH-02", "Task_Category": "Error Analysis", "Prompt": "A student solves 3x + 5 = 20 as 3x = 25. How will you identify and address this error?"},
+        {"Task_ID": "MATH-03", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of perimeter using examples from students’ daily life?"},
+        {"Task_ID": "MATH-04", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between area and perimeter to Class VII students?"},
+        {"Task_ID": "MATH-05", "Task_Category": "Assessment Decision", "Prompt": "After teaching equivalent fractions, how would you check whether students have understood the concept?"},
+        {"Task_ID": "MATH-06", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you adapt a geometry activity for a learner who has difficulty drawing diagrams?"},
+        {"Task_ID": "MATH-07", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short classroom activity to teach place value to middle-school students."},
+        {"Task_ID": "MATH-08", "Task_Category": "Classroom Engagement", "Prompt": "Students are afraid of solving algebra questions on the board. What will you do?"},
+        {"Task_ID": "MATH-09", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain ratio using examples from daily life?"},
+        {"Task_ID": "MATH-10", "Task_Category": "Error Analysis", "Prompt": "A student thinks 0.5 is smaller than 0.25 because 5 is smaller than 25. How will you respond?"}
     ],
 
     "Pedagogy of Science": [
-        {
-            "Task_ID": "SCI-01",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A Class VII student says: “Heat and temperature are the same.” How will you respond as a teacher?"
-        },
-        {
-            "Task_ID": "SCI-02",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you introduce the concept of evaporation using daily-life examples?"
-        },
-        {
-            "Task_ID": "SCI-03",
-            "Task_Category": "Short Activity Design",
-            "Prompt": "Suggest a short classroom activity to show that air occupies space."
-        },
-        {
-            "Task_ID": "SCI-04",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "After teaching separation of substances, how would you check students’ understanding?"
-        },
-        {
-            "Task_ID": "SCI-05",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A student says: “Plants take their food directly from the soil.” How will you respond?"
-        },
-        {
-            "Task_ID": "SCI-06",
-            "Task_Category": "Inclusive Adaptation",
-            "Prompt": "How would you adapt a science activity for a learner who is not confident in handling apparatus?"
-        },
-        {
-            "Task_ID": "SCI-07",
-            "Task_Category": "Classroom Engagement",
-            "Prompt": "Students memorize scientific definitions but cannot relate them to experiments. What will you do?"
-        },
-        {
-            "Task_ID": "SCI-08",
-            "Task_Category": "Use of Example / Analogy",
-            "Prompt": "How would you explain force using playground examples?"
-        },
-        {
-            "Task_ID": "SCI-09",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you explain the difference between renewable and non-renewable resources?"
-        },
-        {
-            "Task_ID": "SCI-10",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A student says: “Heavier objects fall faster than lighter objects.” How will you respond?"
-        }
+        {"Task_ID": "SCI-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VII student says: “Heat and temperature are the same.” How will you respond as a teacher?"},
+        {"Task_ID": "SCI-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of evaporation using daily-life examples?"},
+        {"Task_ID": "SCI-03", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short classroom activity to show that air occupies space."},
+        {"Task_ID": "SCI-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching separation of substances, how would you check students’ understanding?"},
+        {"Task_ID": "SCI-05", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “Plants take their food directly from the soil.” How will you respond?"},
+        {"Task_ID": "SCI-06", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you adapt a science activity for a learner who is not confident in handling apparatus?"},
+        {"Task_ID": "SCI-07", "Task_Category": "Classroom Engagement", "Prompt": "Students memorize scientific definitions but cannot relate them to experiments. What will you do?"},
+        {"Task_ID": "SCI-08", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain force using playground examples?"},
+        {"Task_ID": "SCI-09", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between renewable and non-renewable resources?"},
+        {"Task_ID": "SCI-10", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “Heavier objects fall faster than lighter objects.” How will you respond?"}
     ],
 
     "Pedagogy of Social Science": [
-        {
-            "Task_ID": "SOC-01",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A Class VIII student says: “Democracy only means voting.” How will you respond as a teacher?"
-        },
-        {
-            "Task_ID": "SOC-02",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you introduce the concept of resources using local examples?"
-        },
-        {
-            "Task_ID": "SOC-03",
-            "Task_Category": "Classroom Engagement",
-            "Prompt": "Students find history dates boring and disconnected from life. What will you do?"
-        },
-        {
-            "Task_ID": "SOC-04",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "After teaching fundamental rights, how would you check students’ understanding?"
-        },
-        {
-            "Task_ID": "SOC-05",
-            "Task_Category": "Inclusive Adaptation",
-            "Prompt": "How would you adapt a map-reading activity for a learner who needs additional support?"
-        },
-        {
-            "Task_ID": "SOC-06",
-            "Task_Category": "Use of Example / Analogy",
-            "Prompt": "How would you explain the concept of market using examples from a local shop or weekly market?"
-        },
-        {
-            "Task_ID": "SOC-07",
-            "Task_Category": "Error Analysis",
-            "Prompt": "A student confuses weather with climate. How would you address this misunderstanding?"
-        },
-        {
-            "Task_ID": "SOC-08",
-            "Task_Category": "Short Activity Design",
-            "Prompt": "Suggest a short activity to teach the idea of diversity in India."
-        },
-        {
-            "Task_ID": "SOC-09",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you explain the difference between equality and equity to students?"
-        },
-        {
-            "Task_ID": "SOC-10",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "How would you assess whether students can connect a social science concept with current society?"
-        }
+        {"Task_ID": "SOC-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VIII student says: “Democracy only means voting.” How will you respond as a teacher?"},
+        {"Task_ID": "SOC-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of resources using local examples?"},
+        {"Task_ID": "SOC-03", "Task_Category": "Classroom Engagement", "Prompt": "Students find history dates boring and disconnected from life. What will you do?"},
+        {"Task_ID": "SOC-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching fundamental rights, how would you check students’ understanding?"},
+        {"Task_ID": "SOC-05", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you adapt a map-reading activity for a learner who needs additional support?"},
+        {"Task_ID": "SOC-06", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain the concept of market using examples from a local shop or weekly market?"},
+        {"Task_ID": "SOC-07", "Task_Category": "Error Analysis", "Prompt": "A student confuses weather with climate. How would you address this misunderstanding?"},
+        {"Task_ID": "SOC-08", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short activity to teach the idea of diversity in India."},
+        {"Task_ID": "SOC-09", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between equality and equity to students?"},
+        {"Task_ID": "SOC-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess whether students can connect a social science concept with current society?"}
     ],
 
     "Pedagogy of English": [
-        {
-            "Task_ID": "ENG-01",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A student can read a passage aloud but cannot infer meaning. How will you support the learner?"
-        },
-        {
-            "Task_ID": "ENG-02",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you introduce descriptive writing using classroom objects?"
-        },
-        {
-            "Task_ID": "ENG-03",
-            "Task_Category": "Classroom Engagement",
-            "Prompt": "Students hesitate to speak in English during class. What will you do?"
-        },
-        {
-            "Task_ID": "ENG-04",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "After teaching a poem, how would you check comprehension beyond memorization?"
-        },
-        {
-            "Task_ID": "ENG-05",
-            "Task_Category": "Inclusive Adaptation",
-            "Prompt": "How would you support a learner who understands ideas but struggles to write in English?"
-        },
-        {
-            "Task_ID": "ENG-06",
-            "Task_Category": "Use of Example / Analogy",
-            "Prompt": "How would you explain the difference between literal and implied meaning using simple examples?"
-        },
-        {
-            "Task_ID": "ENG-07",
-            "Task_Category": "Error Analysis",
-            "Prompt": "A student writes grammatically correct sentences but cannot organize a paragraph. How will you respond?"
-        },
-        {
-            "Task_ID": "ENG-08",
-            "Task_Category": "Short Activity Design",
-            "Prompt": "Suggest a short activity to improve students’ vocabulary through context."
-        },
-        {
-            "Task_ID": "ENG-09",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you teach the idea of character analysis in a short story?"
-        },
-        {
-            "Task_ID": "ENG-10",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "How would you assess students’ speaking ability without making them anxious?"
-        }
+        {"Task_ID": "ENG-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A student can read a passage aloud but cannot infer meaning. How will you support the learner?"},
+        {"Task_ID": "ENG-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce descriptive writing using classroom objects?"},
+        {"Task_ID": "ENG-03", "Task_Category": "Classroom Engagement", "Prompt": "Students hesitate to speak in English during class. What will you do?"},
+        {"Task_ID": "ENG-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching a poem, how would you check comprehension beyond memorization?"},
+        {"Task_ID": "ENG-05", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you support a learner who understands ideas but struggles to write in English?"},
+        {"Task_ID": "ENG-06", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain the difference between literal and implied meaning using simple examples?"},
+        {"Task_ID": "ENG-07", "Task_Category": "Error Analysis", "Prompt": "A student writes grammatically correct sentences but cannot organize a paragraph. How will you respond?"},
+        {"Task_ID": "ENG-08", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short activity to improve students’ vocabulary through context."},
+        {"Task_ID": "ENG-09", "Task_Category": "Concept Explanation", "Prompt": "How would you teach the idea of character analysis in a short story?"},
+        {"Task_ID": "ENG-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess students’ speaking ability without making them anxious?"}
     ],
 
     "Pedagogy of Hindi": [
-        {
-            "Task_ID": "HIN-01",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A student memorizes a कविता but cannot explain its भावार्थ. How will you respond?"
-        },
-        {
-            "Task_ID": "HIN-02",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you introduce मुहावरे using daily-life situations?"
-        },
-        {
-            "Task_ID": "HIN-03",
-            "Task_Category": "Classroom Engagement",
-            "Prompt": "Students are not interested in पाठ-वाचन. What will you do?"
-        },
-        {
-            "Task_ID": "HIN-04",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "After teaching a कहानी, how would you check whether students understood the central idea?"
-        },
-        {
-            "Task_ID": "HIN-05",
-            "Task_Category": "Inclusive Adaptation",
-            "Prompt": "How would you support a learner who has difficulty expressing ideas in written Hindi?"
-        },
-        {
-            "Task_ID": "HIN-06",
-            "Task_Category": "Use of Example / Analogy",
-            "Prompt": "How would you explain अलंकार using examples from familiar poems or songs?"
-        },
-        {
-            "Task_ID": "HIN-07",
-            "Task_Category": "Error Analysis",
-            "Prompt": "A student writes answers by memorizing lines but does not explain in their own words. How will you address this?"
-        },
-        {
-            "Task_ID": "HIN-08",
-            "Task_Category": "Short Activity Design",
-            "Prompt": "Suggest a short activity to teach पर्यायवाची शब्द effectively."
-        },
-        {
-            "Task_ID": "HIN-09",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you teach पत्र लेखन in a meaningful classroom way?"
-        },
-        {
-            "Task_ID": "HIN-10",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "How would you assess students’ understanding of a poem beyond recitation?"
-        }
+        {"Task_ID": "HIN-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A student memorizes a कविता but cannot explain its भावार्थ. How will you respond?"},
+        {"Task_ID": "HIN-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce मुहावरे using daily-life situations?"},
+        {"Task_ID": "HIN-03", "Task_Category": "Classroom Engagement", "Prompt": "Students are not interested in पाठ-वाचन. What will you do?"},
+        {"Task_ID": "HIN-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching a कहानी, how would you check whether students understood the central idea?"},
+        {"Task_ID": "HIN-05", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you support a learner who has difficulty expressing ideas in written Hindi?"},
+        {"Task_ID": "HIN-06", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain अलंकार using examples from familiar poems or songs?"},
+        {"Task_ID": "HIN-07", "Task_Category": "Error Analysis", "Prompt": "A student writes answers by memorizing lines but does not explain in their own words. How will you address this?"},
+        {"Task_ID": "HIN-08", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short activity to teach पर्यायवाची शब्द effectively."},
+        {"Task_ID": "HIN-09", "Task_Category": "Concept Explanation", "Prompt": "How would you teach पत्र लेखन in a meaningful classroom way?"},
+        {"Task_ID": "HIN-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess students’ understanding of a poem beyond recitation?"}
     ],
 
     "Pedagogy of Commerce": [
-        {
-            "Task_ID": "COM-01",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you explain the difference between profit and revenue using a simple classroom example?"
-        },
-        {
-            "Task_ID": "COM-02",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A student says: “Sales and profit are the same.” How will you respond?"
-        },
-        {
-            "Task_ID": "COM-03",
-            "Task_Category": "Use of Example / Analogy",
-            "Prompt": "How would you explain assets and liabilities using examples from daily life?"
-        },
-        {
-            "Task_ID": "COM-04",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "After teaching journal entries, how would you check whether students can apply debit and credit rules?"
-        },
-        {
-            "Task_ID": "COM-05",
-            "Task_Category": "Error Analysis",
-            "Prompt": "A student records a cash purchase on the wrong side of an account. How will you diagnose and address the error?"
-        },
-        {
-            "Task_ID": "COM-06",
-            "Task_Category": "Classroom Engagement",
-            "Prompt": "Students find accounting rules mechanical and boring. What teaching strategy will you use?"
-        },
-        {
-            "Task_ID": "COM-07",
-            "Task_Category": "Short Activity Design",
-            "Prompt": "Suggest a short classroom activity to teach demand and supply."
-        },
-        {
-            "Task_ID": "COM-08",
-            "Task_Category": "Inclusive Adaptation",
-            "Prompt": "How would you support a learner who struggles with numerical examples in commerce?"
-        },
-        {
-            "Task_ID": "COM-09",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you introduce the concept of banking services using local examples?"
-        },
-        {
-            "Task_ID": "COM-10",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "How would you assess whether students can connect business concepts with real market situations?"
-        }
+        {"Task_ID": "COM-01", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between profit and revenue using a simple classroom example?"},
+        {"Task_ID": "COM-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “Sales and profit are the same.” How will you respond?"},
+        {"Task_ID": "COM-03", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain assets and liabilities using examples from daily life?"},
+        {"Task_ID": "COM-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching journal entries, how would you check whether students can apply debit and credit rules?"},
+        {"Task_ID": "COM-05", "Task_Category": "Error Analysis", "Prompt": "A student records a cash purchase on the wrong side of an account. How will you diagnose and address the error?"},
+        {"Task_ID": "COM-06", "Task_Category": "Classroom Engagement", "Prompt": "Students find accounting rules mechanical and boring. What teaching strategy will you use?"},
+        {"Task_ID": "COM-07", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short classroom activity to teach demand and supply."},
+        {"Task_ID": "COM-08", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you support a learner who struggles with numerical examples in commerce?"},
+        {"Task_ID": "COM-09", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of banking services using local examples?"},
+        {"Task_ID": "COM-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess whether students can connect business concepts with real market situations?"}
     ],
 
     "Pedagogy of Computer Science": [
-        {
-            "Task_ID": "CS-01",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you explain the difference between hardware and software using classroom examples?"
-        },
-        {
-            "Task_ID": "CS-02",
-            "Task_Category": "Misconception Diagnosis",
-            "Prompt": "A student says: “The internet and the web are the same.” How will you respond?"
-        },
-        {
-            "Task_ID": "CS-03",
-            "Task_Category": "Use of Example / Analogy",
-            "Prompt": "How would you explain the concept of an algorithm using a daily-life example?"
-        },
-        {
-            "Task_ID": "CS-04",
-            "Task_Category": "Error Analysis",
-            "Prompt": "A student writes code without understanding the logic behind it. How will you address this?"
-        },
-        {
-            "Task_ID": "CS-05",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "After teaching loops, how would you check whether students understand repetition in programming?"
-        },
-        {
-            "Task_ID": "CS-06",
-            "Task_Category": "Short Activity Design",
-            "Prompt": "Suggest a short unplugged activity to teach binary numbers."
-        },
-        {
-            "Task_ID": "CS-07",
-            "Task_Category": "Classroom Engagement",
-            "Prompt": "Some students are afraid of coding and avoid participation. What will you do?"
-        },
-        {
-            "Task_ID": "CS-08",
-            "Task_Category": "Inclusive Adaptation",
-            "Prompt": "How would you support a learner who has limited access to a computer outside class?"
-        },
-        {
-            "Task_ID": "CS-09",
-            "Task_Category": "Concept Explanation",
-            "Prompt": "How would you explain data privacy to school students using simple examples?"
-        },
-        {
-            "Task_ID": "CS-10",
-            "Task_Category": "Assessment Decision",
-            "Prompt": "How would you assess whether students can apply computational thinking to a non-computer problem?"
-        }
+        {"Task_ID": "CS-01", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between hardware and software using classroom examples?"},
+        {"Task_ID": "CS-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “The internet and the web are the same.” How will you respond?"},
+        {"Task_ID": "CS-03", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain the concept of an algorithm using a daily-life example?"},
+        {"Task_ID": "CS-04", "Task_Category": "Error Analysis", "Prompt": "A student writes code without understanding the logic behind it. How will you address this?"},
+        {"Task_ID": "CS-05", "Task_Category": "Assessment Decision", "Prompt": "After teaching loops, how would you check whether students understand repetition in programming?"},
+        {"Task_ID": "CS-06", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short unplugged activity to teach binary numbers."},
+        {"Task_ID": "CS-07", "Task_Category": "Classroom Engagement", "Prompt": "Some students are afraid of coding and avoid participation. What will you do?"},
+        {"Task_ID": "CS-08", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you support a learner who has limited access to a computer outside class?"},
+        {"Task_ID": "CS-09", "Task_Category": "Concept Explanation", "Prompt": "How would you explain data privacy to school students using simple examples?"},
+        {"Task_ID": "CS-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess whether students can apply computational thinking to a non-computer problem?"}
     ]
 }
 
@@ -451,6 +171,9 @@ def initialize_session():
 
     if "audio_files" not in st.session_state:
         st.session_state.audio_files = {}
+
+    if "page" not in st.session_state:
+        st.session_state.page = "Home"
 
 
 def calculate_scores(df):
@@ -505,67 +228,15 @@ def generate_feedback(row):
     )
 
 
-def create_sample_data():
-    rows = []
-
-    sample_subjects = [
-        "Pedagogy of Mathematics",
-        "Pedagogy of Science",
-        "Pedagogy of English"
-    ]
-
-    for i, subject in enumerate(sample_subjects, start=1):
-        task = TASK_BANK[subject][0]
-
-        row = {
-            "Student_ID": f"PST0{i}",
-            "Name": f"Participant {i}",
-            "Semester": "B.Ed. Semester II",
-            "Pedagogy_Subject": subject,
-            "Task_ID": task["Task_ID"],
-            "Task_Category": task["Task_Category"],
-            "Prompt": task["Prompt"],
-            "Voice_File_Name": f"sample_audio_{i}.mp3",
-            "Written_Response": "This is a sample written pedagogical response for testing the dashboard.",
-            "Reflection_1": "This is a sample diagnostic reflection.",
-            "Reflection_2": "This is a sample teaching strategy reflection.",
-            "Submission_Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "Feedback": ""
-        }
-
-        for col in RUBRIC_COLUMNS:
-            row[col] = np.nan
-
-        rows.append(row)
-
-    return calculate_scores(pd.DataFrame(rows))
-
-
-def show_required_columns():
-    st.code(
-        """
-Student_ID
-Name
-Semester
-Pedagogy_Subject
-Task_ID
-Task_Category
-Prompt
-Voice_File_Name
-Written_Response
-Reflection_1
-Reflection_2
-Submission_Time
-        """,
-        language="text"
-    )
-
-
 def sort_task_ids(task_id):
     try:
         return int(str(task_id).split("-")[-1])
     except:
         return str(task_id)
+
+
+def set_page(page_name):
+    st.session_state.page = page_name
 
 
 initialize_session()
@@ -577,19 +248,23 @@ initialize_session()
 st.sidebar.title("🎙️ VoiceBridge-PST")
 st.sidebar.caption("Activity and Analytics Platform")
 
-page = st.sidebar.radio(
-    "Menu",
-    [
-        "Home",
-        "Activity Submission",
-        "Teacher Educator: Import Data",
-        "Review Responses",
-        "Score Responses",
-        "Diagnostic Profile",
-        "Task Analytics",
-        "Export Data"
-    ]
-)
+st.sidebar.markdown("### For Participants")
+if st.sidebar.button("Activity Submission", use_container_width=True):
+    set_page("Activity Submission")
+
+st.sidebar.markdown("### For Teacher Educator")
+if st.sidebar.button("Home", use_container_width=True):
+    set_page("Home")
+if st.sidebar.button("Review Responses", use_container_width=True):
+    set_page("Review Responses")
+if st.sidebar.button("Score Responses", use_container_width=True):
+    set_page("Score Responses")
+if st.sidebar.button("Diagnostic Profile", use_container_width=True):
+    set_page("Diagnostic Profile")
+if st.sidebar.button("Task Analytics", use_container_width=True):
+    set_page("Task Analytics")
+if st.sidebar.button("Download Data", use_container_width=True):
+    set_page("Download Data")
 
 st.sidebar.divider()
 
@@ -601,28 +276,28 @@ if len(current_df) > 0:
 else:
     st.sidebar.info("No submissions yet.")
 
+page = st.session_state.page
+
 # -------------------------------------------------------
 # Page 1: Home
 # -------------------------------------------------------
 
 if page == "Home":
-    st.title("VoiceBridge-PST Dashboard")
-    st.subheader("Voice-First Micro-Pedagogical Reasoning Activity and Analytics Platform")
+    st.markdown("# 🎙️ VoiceBridge-PST Dashboard")
+    st.markdown("### Voice-First Micro-Pedagogical Reasoning Activity and Analytics Platform")
 
-    st.markdown("---")
-
-    col1, col2 = st.columns([1, 3])
-
-    with col1:
-        st.markdown("### 🎙️")
-        st.markdown("## VoiceBridge-PST")
-
-    with col2:
-        st.markdown("## Conceptualized and Developed by")
-        st.markdown("**Dr. Meenakshi Dwivedi**")
-        st.markdown("Assistant Professor")
-        st.markdown("Department of Education / School of Education")
-        st.markdown("Mahatma Jyotiba Phule Rohilkhand University, Bareilly, Uttar Pradesh, India")
+    st.markdown(
+        """
+        <div style="margin-top: 8px; line-height: 1.3;">
+            <span style="font-size: 15px; color: #555;">Conceptualized and Developed by</span><br>
+            <b>Dr. Meenakshi Dwivedi</b><br>
+            Assistant Professor<br>
+            Department of Education / School of Education<br>
+            Mahatma Jyotiba Phule Rohilkhand University, Bareilly, Uttar Pradesh, India
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.markdown("---")
 
@@ -645,28 +320,23 @@ if page == "Home":
     - examine voice–written alignment,
     - generate diagnostic profiles,
     - analyse task-wise performance,
-    - export scored data.
+    - download scored data.
     """)
 
     st.markdown("---")
 
     st.markdown("## Dashboard Workflow")
-
-    st.markdown("""
-    **Activity Submission → Review Responses → Score Responses → Diagnostic Profile → Task Analytics → Export Data**
-    """)
+    st.markdown("**Activity Submission → Review Responses → Score Responses → Diagnostic Profile → Task Analytics → Download Data**")
 
     st.markdown("---")
 
     st.markdown("## Pedagogy Subjects Included")
-
     for subject in PEDAGOGY_SUBJECTS:
         st.markdown(f"- {subject}")
 
     st.markdown("---")
 
     st.markdown("## Assessment Dimensions")
-
     st.markdown("""
     1. Conceptual Clarity  
     2. Pedagogical Reasoning  
@@ -819,73 +489,7 @@ elif page == "Activity Submission":
             st.balloons()
 
 # -------------------------------------------------------
-# Page 3: Teacher Educator: Import Data
-# -------------------------------------------------------
-
-elif page == "Teacher Educator: Import Data":
-    st.title("Teacher Educator: Import Data")
-
-    st.markdown("""
-    Use this page only if responses were collected through Google Forms, Excel, CSV, or another external system.
-    """)
-
-    with st.expander("View required columns"):
-        show_required_columns()
-
-    uploaded_file = st.file_uploader(
-        "Upload Excel or CSV file",
-        type=["xlsx", "csv"]
-    )
-
-    if uploaded_file is not None:
-        try:
-            if uploaded_file.name.endswith(".csv"):
-                df = pd.read_csv(uploaded_file)
-            else:
-                df = pd.read_excel(uploaded_file)
-
-            missing_cols = [col for col in REQUIRED_COLUMNS if col not in df.columns]
-
-            if missing_cols:
-                st.error("The uploaded file is missing required columns:")
-                st.write(missing_cols)
-            else:
-                for col in RUBRIC_COLUMNS:
-                    if col not in df.columns:
-                        df[col] = np.nan
-
-                if "Feedback" not in df.columns:
-                    df["Feedback"] = ""
-
-                df = calculate_scores(df)
-                st.session_state.data = df
-
-                st.success("Data imported successfully.")
-
-                col1, col2, col3 = st.columns(3)
-                col1.metric("Participants", df["Student_ID"].nunique())
-                col2.metric("Submissions", len(df))
-                col3.metric("Subjects", df["Pedagogy_Subject"].nunique())
-
-                st.markdown("### Data Preview")
-                st.dataframe(df, use_container_width=True)
-
-        except Exception as e:
-            st.error(f"Error reading file: {e}")
-
-    st.divider()
-
-    st.markdown("### Use Sample Data")
-
-    if st.button("Load Sample Data"):
-        df = create_sample_data()
-        st.session_state.data = df
-
-        st.success("Sample data loaded successfully.")
-        st.dataframe(df, use_container_width=True)
-
-# -------------------------------------------------------
-# Page 4: Review Responses
+# Page 3: Review Responses
 # -------------------------------------------------------
 
 elif page == "Review Responses":
@@ -960,7 +564,7 @@ elif page == "Review Responses":
             st.info(row["Feedback"])
 
 # -------------------------------------------------------
-# Page 5: Score Responses
+# Page 4: Score Responses
 # -------------------------------------------------------
 
 elif page == "Score Responses":
@@ -1019,7 +623,6 @@ elif page == "Score Responses":
         st.markdown("### Rubric Scores")
 
         scores = {}
-
         left_col, right_col = st.columns(2)
 
         for i, rubric_col in enumerate(RUBRIC_COLUMNS):
@@ -1074,7 +677,7 @@ elif page == "Score Responses":
         st.caption("Scoring guide: 1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent")
 
 # -------------------------------------------------------
-# Page 6: Diagnostic Profile
+# Page 5: Diagnostic Profile
 # -------------------------------------------------------
 
 elif page == "Diagnostic Profile":
@@ -1164,7 +767,7 @@ elif page == "Diagnostic Profile":
         st.dataframe(student_df, use_container_width=True)
 
 # -------------------------------------------------------
-# Page 7: Task Analytics
+# Page 6: Task Analytics
 # -------------------------------------------------------
 
 elif page == "Task Analytics":
@@ -1281,11 +884,11 @@ elif page == "Task Analytics":
         st.dataframe(completion, use_container_width=True)
 
 # -------------------------------------------------------
-# Page 8: Export Data
+# Page 7: Download Data
 # -------------------------------------------------------
 
-elif page == "Export Data":
-    st.title("Export Data")
+elif page == "Download Data":
+    st.title("Download Data")
 
     df = calculate_scores(st.session_state.data)
 
