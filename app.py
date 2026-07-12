@@ -288,8 +288,8 @@ if page == "Home":
 
     st.markdown(
         """
-        <div style="margin-top: 8px; line-height: 1.3;">
-            <span style="font-size: 15px; color: #555;">Conceptualized and Developed by</span><br>
+        <div style="margin-top: 6px; line-height: 1.25;">
+            <span style="font-size: 14px; color: #666;">Conceptualized and Developed by</span><br>
             <b>Dr. Meenakshi Dwivedi</b><br>
             Assistant Professor<br>
             Department of Education / School of Education<br>
