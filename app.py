@@ -508,7 +508,11 @@ def generate_feedback(row):
 def create_sample_data():
     rows = []
 
-    sample_subjects = ["Pedagogy of Mathematics", "Pedagogy of Science", "Pedagogy of English"]
+    sample_subjects = [
+        "Pedagogy of Mathematics",
+        "Pedagogy of Science",
+        "Pedagogy of English"
+    ]
 
     for i, subject in enumerate(sample_subjects, start=1):
         task = TASK_BANK[subject][0]
@@ -578,7 +582,7 @@ page = st.sidebar.radio(
     [
         "Home",
         "Activity Submission",
-        "Upload Existing Data",
+        "Teacher Educator: Import Data",
         "Review Responses",
         "Score Responses",
         "Diagnostic Profile",
@@ -815,14 +819,14 @@ elif page == "Activity Submission":
             st.balloons()
 
 # -------------------------------------------------------
-# Page 3: Upload Existing Data
+# Page 3: Teacher Educator: Import Data
 # -------------------------------------------------------
 
-elif page == "Upload Existing Data":
-    st.title("Upload Existing Data")
+elif page == "Teacher Educator: Import Data":
+    st.title("Teacher Educator: Import Data")
 
     st.markdown("""
-    Use this page if responses were collected through Google Forms, Excel, or another external system.
+    Use this page only if responses were collected through Google Forms, Excel, CSV, or another external system.
     """)
 
     with st.expander("View required columns"):
@@ -856,7 +860,7 @@ elif page == "Upload Existing Data":
                 df = calculate_scores(df)
                 st.session_state.data = df
 
-                st.success("Data uploaded successfully.")
+                st.success("Data imported successfully.")
 
                 col1, col2, col3 = st.columns(3)
                 col1.metric("Participants", df["Student_ID"].nunique())
