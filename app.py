@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from io import BytesIO
 from datetime import datetime
 
@@ -42,7 +41,7 @@ RUBRIC_LABELS = {
 MAX_SCORE_PER_TASK = len(RUBRIC_COLUMNS) * 5
 
 # -------------------------------------------------------
-# Required Columns
+# Required Data Columns
 # -------------------------------------------------------
 
 REQUIRED_COLUMNS = [
@@ -61,12 +60,12 @@ REQUIRED_COLUMNS = [
 ]
 
 # -------------------------------------------------------
-# Subject-wise Prompt Bank: 10 Tasks per Subject
+# Subject-wise Prompt Bank
 # -------------------------------------------------------
 
 TASK_BANK = {
     "Pedagogy of Mathematics": [
-        {"Task_ID": "MATH-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VI student says: “A larger denominator means a larger fraction.” How will you respond as a teacher?"},
+        {"Task_ID": "MATH-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VI student says: A larger denominator means a larger fraction. How will you respond as a teacher?"},
         {"Task_ID": "MATH-02", "Task_Category": "Error Analysis", "Prompt": "A student solves 3x + 5 = 20 as 3x = 25. How will you identify and address this error?"},
         {"Task_ID": "MATH-03", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of perimeter using examples from students’ daily life?"},
         {"Task_ID": "MATH-04", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between area and perimeter to Class VII students?"},
@@ -79,20 +78,20 @@ TASK_BANK = {
     ],
 
     "Pedagogy of Science": [
-        {"Task_ID": "SCI-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VII student says: “Heat and temperature are the same.” How will you respond as a teacher?"},
+        {"Task_ID": "SCI-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VII student says: Heat and temperature are the same. How will you respond as a teacher?"},
         {"Task_ID": "SCI-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of evaporation using daily-life examples?"},
         {"Task_ID": "SCI-03", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short classroom activity to show that air occupies space."},
         {"Task_ID": "SCI-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching separation of substances, how would you check students’ understanding?"},
-        {"Task_ID": "SCI-05", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “Plants take their food directly from the soil.” How will you respond?"},
+        {"Task_ID": "SCI-05", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: Plants take their food directly from the soil. How will you respond?"},
         {"Task_ID": "SCI-06", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you adapt a science activity for a learner who is not confident in handling apparatus?"},
         {"Task_ID": "SCI-07", "Task_Category": "Classroom Engagement", "Prompt": "Students memorize scientific definitions but cannot relate them to experiments. What will you do?"},
         {"Task_ID": "SCI-08", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain force using playground examples?"},
         {"Task_ID": "SCI-09", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between renewable and non-renewable resources?"},
-        {"Task_ID": "SCI-10", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “Heavier objects fall faster than lighter objects.” How will you respond?"}
+        {"Task_ID": "SCI-10", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: Heavier objects fall faster than lighter objects. How will you respond?"}
     ],
 
     "Pedagogy of Social Science": [
-        {"Task_ID": "SOC-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VIII student says: “Democracy only means voting.” How will you respond as a teacher?"},
+        {"Task_ID": "SOC-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VIII student says: Democracy only means voting. How will you respond as a teacher?"},
         {"Task_ID": "SOC-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of resources using local examples?"},
         {"Task_ID": "SOC-03", "Task_Category": "Classroom Engagement", "Prompt": "Students find history dates boring and disconnected from life. What will you do?"},
         {"Task_ID": "SOC-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching fundamental rights, how would you check students’ understanding?"},
@@ -118,21 +117,21 @@ TASK_BANK = {
     ],
 
     "Pedagogy of Hindi": [
-        {"Task_ID": "HIN-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A student memorizes a कविता but cannot explain its भावार्थ. How will you respond?"},
-        {"Task_ID": "HIN-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce मुहावरे using daily-life situations?"},
-        {"Task_ID": "HIN-03", "Task_Category": "Classroom Engagement", "Prompt": "Students are not interested in पाठ-वाचन. What will you do?"},
-        {"Task_ID": "HIN-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching a कहानी, how would you check whether students understood the central idea?"},
+        {"Task_ID": "HIN-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A student memorizes a kavita but cannot explain its bhavarth. How will you respond?"},
+        {"Task_ID": "HIN-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce muhavare using daily-life situations?"},
+        {"Task_ID": "HIN-03", "Task_Category": "Classroom Engagement", "Prompt": "Students are not interested in path-vachan. What will you do?"},
+        {"Task_ID": "HIN-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching a kahani, how would you check whether students understood the central idea?"},
         {"Task_ID": "HIN-05", "Task_Category": "Inclusive Adaptation", "Prompt": "How would you support a learner who has difficulty expressing ideas in written Hindi?"},
-        {"Task_ID": "HIN-06", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain अलंकार using examples from familiar poems or songs?"},
+        {"Task_ID": "HIN-06", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain alankar using examples from familiar poems or songs?"},
         {"Task_ID": "HIN-07", "Task_Category": "Error Analysis", "Prompt": "A student writes answers by memorizing lines but does not explain in their own words. How will you address this?"},
-        {"Task_ID": "HIN-08", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short activity to teach पर्यायवाची शब्द effectively."},
-        {"Task_ID": "HIN-09", "Task_Category": "Concept Explanation", "Prompt": "How would you teach पत्र लेखन in a meaningful classroom way?"},
+        {"Task_ID": "HIN-08", "Task_Category": "Short Activity Design", "Prompt": "Suggest a short activity to teach paryayvachi shabd effectively."},
+        {"Task_ID": "HIN-09", "Task_Category": "Concept Explanation", "Prompt": "How would you teach patra lekhan in a meaningful classroom way?"},
         {"Task_ID": "HIN-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess students’ understanding of a poem beyond recitation?"}
     ],
 
     "Pedagogy of Commerce": [
         {"Task_ID": "COM-01", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between profit and revenue using a simple classroom example?"},
-        {"Task_ID": "COM-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “Sales and profit are the same.” How will you respond?"},
+        {"Task_ID": "COM-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: Sales and profit are the same. How will you respond?"},
         {"Task_ID": "COM-03", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain assets and liabilities using examples from daily life?"},
         {"Task_ID": "COM-04", "Task_Category": "Assessment Decision", "Prompt": "After teaching journal entries, how would you check whether students can apply debit and credit rules?"},
         {"Task_ID": "COM-05", "Task_Category": "Error Analysis", "Prompt": "A student records a cash purchase on the wrong side of an account. How will you diagnose and address the error?"},
@@ -145,7 +144,7 @@ TASK_BANK = {
 
     "Pedagogy of Computer Science": [
         {"Task_ID": "CS-01", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between hardware and software using classroom examples?"},
-        {"Task_ID": "CS-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: “The internet and the web are the same.” How will you respond?"},
+        {"Task_ID": "CS-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says: The internet and the web are the same. How will you respond?"},
         {"Task_ID": "CS-03", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain the concept of an algorithm using a daily-life example?"},
         {"Task_ID": "CS-04", "Task_Category": "Error Analysis", "Prompt": "A student writes code without understanding the logic behind it. How will you address this?"},
         {"Task_ID": "CS-05", "Task_Category": "Assessment Decision", "Prompt": "After teaching loops, how would you check whether students understand repetition in programming?"},
@@ -231,7 +230,7 @@ def generate_feedback(row):
 def sort_task_ids(task_id):
     try:
         return int(str(task_id).split("-")[-1])
-    except:
+    except Exception:
         return str(task_id)
 
 
@@ -279,7 +278,7 @@ else:
 page = st.session_state.page
 
 # -------------------------------------------------------
-# Page 1: Home
+# Home Page
 # -------------------------------------------------------
 
 if page == "Home":
@@ -302,7 +301,6 @@ if page == "Home":
     st.markdown("---")
 
     st.markdown("## Purpose")
-
     st.markdown("""
     The **VoiceBridge-PST Dashboard** is a web-based activity and analytics platform designed for 
     voice-first micro-pedagogical reasoning assessment among pre-service teachers.
@@ -317,7 +315,7 @@ if page == "Home":
 
     - review submissions,
     - score responses using a rubric,
-    - examine voice–written alignment,
+    - examine voice-written alignment,
     - generate diagnostic profiles,
     - analyse task-wise performance,
     - download scored data.
@@ -337,15 +335,8 @@ if page == "Home":
     st.markdown("---")
 
     st.markdown("## Assessment Dimensions")
-    st.markdown("""
-    1. Conceptual Clarity  
-    2. Pedagogical Reasoning  
-    3. Learner-Centred Explanation  
-    4. Misconception Diagnosis  
-    5. Use of Example / Teaching Strategy  
-    6. Reflective Thinking  
-    7. Voice–Written Alignment  
-    """)
+    for i, col in enumerate(RUBRIC_COLUMNS, start=1):
+        st.markdown(f"{i}. {RUBRIC_LABELS[col]}")
 
     st.info(
         "The current version is suitable for testing and demonstration. "
@@ -353,7 +344,7 @@ if page == "Home":
     )
 
 # -------------------------------------------------------
-# Page 2: Activity Submission
+# Activity Submission Page
 # -------------------------------------------------------
 
 elif page == "Activity Submission":
@@ -386,7 +377,7 @@ elif page == "Activity Submission":
     ]
 
     task_options = {
-        f'{task["Task_ID"]} — {task["Prompt"][:75]}...': task
+        f'{task["Task_ID"]} - {task["Prompt"][:75]}...': task
         for task in filtered_tasks
     }
 
@@ -425,7 +416,7 @@ elif page == "Activity Submission":
             st.text_input("Selected Pedagogy Subject", value=selected_subject, disabled=True)
 
         st.markdown("## Voice Reasoning")
-        st.caption("Record your oral explanation on your phone/laptop and upload the audio file. Suggested duration: 2–3 minutes.")
+        st.caption("Record your oral explanation on your phone/laptop and upload the audio file. Suggested duration: 2-3 minutes.")
 
         audio_file = st.file_uploader(
             "Upload Audio Response",
@@ -434,7 +425,7 @@ elif page == "Activity Submission":
 
         st.markdown("## Written Pedagogical Response")
         written_response = st.text_area(
-            "Write a short response of about 150–200 words.",
+            "Write a short response of about 150-200 words.",
             height=180
         )
 
@@ -459,7 +450,8 @@ elif page == "Activity Submission":
         elif not written_response.strip():
             st.error("Please write the pedagogical response.")
         else:
-            audio_key = f"{student_id}_{task_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{audio_file.name}"
+            safe_student_id = student_id.strip().replace(" ", "_")
+            audio_key = f"{safe_student_id}_{task_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{audio_file.name}"
             st.session_state.audio_files[audio_key] = audio_file.getvalue()
 
             new_row = {
@@ -489,7 +481,7 @@ elif page == "Activity Submission":
             st.balloons()
 
 # -------------------------------------------------------
-# Page 3: Review Responses
+# Review Responses Page
 # -------------------------------------------------------
 
 elif page == "Review Responses":
@@ -533,7 +525,7 @@ elif page == "Review Responses":
         if audio_name in st.session_state.audio_files:
             st.audio(st.session_state.audio_files[audio_name])
         else:
-            st.caption("Audio file is not available in this session. For broad use, connect cloud storage.")
+            st.caption("Audio file is not available in this session.")
 
         st.markdown("### Written Pedagogical Response")
         st.write(row["Written_Response"])
@@ -564,7 +556,7 @@ elif page == "Review Responses":
             st.info(row["Feedback"])
 
 # -------------------------------------------------------
-# Page 4: Score Responses
+# Score Responses Page
 # -------------------------------------------------------
 
 elif page == "Score Responses":
@@ -677,7 +669,7 @@ elif page == "Score Responses":
         st.caption("Scoring guide: 1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent")
 
 # -------------------------------------------------------
-# Page 5: Diagnostic Profile
+# Diagnostic Profile Page
 # -------------------------------------------------------
 
 elif page == "Diagnostic Profile":
@@ -725,30 +717,17 @@ elif page == "Diagnostic Profile":
             st.markdown(f"**Strongest Dimension:** {RUBRIC_LABELS[strongest]}")
             st.markdown(f"**Needs Improvement:** {RUBRIC_LABELS[weakest]}")
 
+            chart_df = pd.DataFrame({
+                "Dimension": [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS],
+                "Average Score": [rubric_means[col] for col in RUBRIC_COLUMNS]
+            }).set_index("Dimension")
+
             st.markdown("### Dimension-wise Profile")
+            st.bar_chart(chart_df)
 
-            fig, ax = plt.subplots(figsize=(10, 5))
-            labels = [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS]
-            values = [rubric_means[col] for col in RUBRIC_COLUMNS]
-
-            ax.bar(labels, values)
-            ax.set_ylabel("Average Score")
-            ax.set_ylim(0, 5)
-            ax.tick_params(axis="x", rotation=75)
-
-            st.pyplot(fig)
-
+            progress_df = student_df[["Task_ID", "Total_Score"]].set_index("Task_ID")
             st.markdown("### Task-wise Progress")
-
-            fig2, ax2 = plt.subplots(figsize=(8, 4))
-
-            ax2.plot(student_df["Task_ID"], student_df["Total_Score"], marker="o")
-            ax2.set_xlabel("Task")
-            ax2.set_ylabel("Total Score")
-            ax2.set_ylim(0, MAX_SCORE_PER_TASK)
-            ax2.tick_params(axis="x", rotation=45)
-
-            st.pyplot(fig2)
+            st.line_chart(progress_df)
 
             st.markdown("### Diagnostic Note")
 
@@ -767,7 +746,7 @@ elif page == "Diagnostic Profile":
         st.dataframe(student_df, use_container_width=True)
 
 # -------------------------------------------------------
-# Page 6: Task Analytics
+# Task Analytics Page
 # -------------------------------------------------------
 
 elif page == "Task Analytics":
@@ -811,27 +790,19 @@ elif page == "Task Analytics":
 
         st.dataframe(task_summary.drop(columns=["Task_Order"]), use_container_width=True)
 
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.bar(task_summary["Task_ID"], task_summary["Mean Score"])
-        ax.set_xlabel("Task")
-        ax.set_ylabel("Mean Total Score")
-        ax.set_ylim(0, MAX_SCORE_PER_TASK)
-        ax.tick_params(axis="x", rotation=45)
-        st.pyplot(fig)
+        chart_task = task_summary[["Task_ID", "Mean Score"]].set_index("Task_ID")
+        st.bar_chart(chart_task)
 
         st.markdown("### Dimension-wise Mean Scores")
 
         rubric_mean = df[RUBRIC_COLUMNS].mean(numeric_only=True)
 
-        fig2, ax2 = plt.subplots(figsize=(10, 5))
-        labels = [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS]
-        values = [rubric_mean[col] for col in RUBRIC_COLUMNS]
+        dimension_df = pd.DataFrame({
+            "Dimension": [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS],
+            "Average Score": [rubric_mean[col] for col in RUBRIC_COLUMNS]
+        }).set_index("Dimension")
 
-        ax2.bar(labels, values)
-        ax2.set_ylabel("Average Score")
-        ax2.set_ylim(0, 5)
-        ax2.tick_params(axis="x", rotation=75)
-        st.pyplot(fig2)
+        st.bar_chart(dimension_df)
 
         st.markdown("### Subject-wise Summary")
 
@@ -884,7 +855,7 @@ elif page == "Task Analytics":
         st.dataframe(completion, use_container_width=True)
 
 # -------------------------------------------------------
-# Page 7: Download Data
+# Download Data Page
 # -------------------------------------------------------
 
 elif page == "Download Data":
