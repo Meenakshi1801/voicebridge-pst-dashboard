@@ -3,13 +3,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
+from datetime import datetime
 
 # -------------------------------------------------------
 # Page Configuration
 # -------------------------------------------------------
 
 st.set_page_config(
-    page_title="VoiceBridge-PST Analytics",
+    page_title="VoiceBridge-PST Dashboard",
     page_icon="🎙️",
     layout="wide"
 )
@@ -20,14 +21,17 @@ st.set_page_config(
 
 REQUIRED_COLUMNS = [
     "Student_ID",
-    "Group",
+    "Name",
+    "Semester",
+    "Pedagogy_Subject",
     "Task_No",
     "Prompt_Type",
     "Prompt",
-    "Voice_File_Link",
+    "Voice_File_Name",
     "Written_Response",
     "Reflection_1",
-    "Reflection_2"
+    "Reflection_2",
+    "Submission_Time"
 ]
 
 RUBRIC_COLUMNS = [
@@ -52,65 +56,43 @@ RUBRIC_LABELS = {
 
 MAX_SCORE_PER_TASK = len(RUBRIC_COLUMNS) * 5
 
+TASK_BANK = {
+    "Task 1": {
+        "Prompt_Type": "Misconception Diagnosis",
+        "Prompt": "A Class VI student says: “A larger denominator means a larger fraction.” How will you respond as a teacher?"
+    },
+    "Task 2": {
+        "Prompt_Type": "Classroom Response",
+        "Prompt": "Some students are not participating in group work. What will you do as a teacher?"
+    },
+    "Task 3": {
+        "Prompt_Type": "Inclusive Adaptation",
+        "Prompt": "How would you adapt a classroom activity for a learner who needs additional learning support?"
+    },
+    "Task 4": {
+        "Prompt_Type": "Assessment Decision",
+        "Prompt": "After teaching a concept, how would you check whether students have understood it?"
+    },
+    "Task 5": {
+        "Prompt_Type": "Pedagogical Explanation",
+        "Prompt": "Explain how you would introduce a new concept using an example from students’ daily life."
+    }
+}
+
 
 # -------------------------------------------------------
 # Helper Functions
 # -------------------------------------------------------
 
-def create_sample_template():
-    data = {
-        "Student_ID": ["PST01", "PST01", "PST02", "PST02"],
-        "Group": ["Experimental", "Experimental", "Control", "Control"],
-        "Task_No": ["Task 1", "Task 2", "Task 1", "Task 2"],
-        "Prompt_Type": [
-            "Misconception Diagnosis",
-            "Classroom Response",
-            "Misconception Diagnosis",
-            "Classroom Response"
-        ],
-        "Prompt": [
-            "A Class VI student says that a larger denominator means a larger fraction. How will you respond?",
-            "Some students are not participating in group work. What will you do as a teacher?",
-            "A Class VI student says that a larger denominator means a larger fraction. How will you respond?",
-            "Some students are not participating in group work. What will you do as a teacher?"
-        ],
-        "Voice_File_Link": [
-            "https://drive.google.com/example-audio-1",
-            "https://drive.google.com/example-audio-2",
-            "",
-            ""
-        ],
-        "Written_Response": [
-            "I will first identify the misconception and use visual fraction strips to explain.",
-            "I will observe the reasons, assign roles, and encourage participation.",
-            "I will explain fractions by giving examples.",
-            "I will ask students to participate and write answers."
-        ],
-        "Reflection_1": [
-            "The student is confused about denominator size and fraction value.",
-            "Lack of role clarity may reduce participation.",
-            "",
-            ""
-        ],
-        "Reflection_2": [
-            "I will use paper folding or fraction circles.",
-            "I will use group roles and peer support.",
-            "",
-            ""
-        ]
-    }
+def initialize_session():
+    if "responses" not in st.session_state:
+        st.session_state.responses = pd.DataFrame(columns=REQUIRED_COLUMNS + RUBRIC_COLUMNS + ["Total_Score", "Percentage", "Feedback"])
 
-    df = pd.DataFrame(data)
+    if "audio_files" not in st.session_state:
+        st.session_state.audio_files = {}
 
-    for col in RUBRIC_COLUMNS:
-        df[col] = np.nan
-
-    return df
-
-
-def validate_columns(df):
-    missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
-    return missing
+    if "data" not in st.session_state:
+        st.session_state.data = st.session_state.responses.copy()
 
 
 def calculate_scores(df):
@@ -128,11 +110,16 @@ def calculate_scores(df):
 
 def convert_df_to_excel(df):
     output = BytesIO()
-
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="VoiceBridge_PST_Data")
-
     return output.getvalue()
+
+
+def clean_task_order(task_value):
+    try:
+        return int(str(task_value).replace("Task", "").strip())
+    except:
+        return str(task_value)
 
 
 def generate_feedback(row):
@@ -149,9 +136,9 @@ def generate_feedback(row):
     weakest = min(available_scores, key=available_scores.get)
 
     feedback_map = {
-        "Conceptual_Clarity": "Strengthen clarity of the core pedagogical or conceptual issue before proposing a response.",
-        "Pedagogical_Reasoning": "Provide a stronger justification for why the selected teaching response is appropriate.",
-        "Learner_Centred_Explanation": "Connect the explanation more clearly with learners’ needs, level, and classroom context.",
+        "Conceptual_Clarity": "Strengthen clarity of the core concept or pedagogical issue.",
+        "Pedagogical_Reasoning": "Give stronger justification for the selected teaching response.",
+        "Learner_Centred_Explanation": "Connect the explanation more clearly with learners’ needs and classroom context.",
         "Misconception_Diagnosis": "Identify the exact misconception or learning difficulty more precisely.",
         "Use_of_Example_Strategy": "Use more concrete examples, activities, analogies, or classroom strategies.",
         "Reflective_Thinking": "Add deeper reflection on strengths, limitations, and possible improvement.",
@@ -165,66 +152,104 @@ def generate_feedback(row):
     )
 
 
-def clean_task_order(task_value):
-    try:
-        return int(str(task_value).replace("Task", "").strip())
-    except:
-        return str(task_value)
-
-
 def show_required_columns():
     st.code(
         """
 Student_ID
-Group
+Name
+Semester
+Pedagogy_Subject
 Task_No
 Prompt_Type
 Prompt
-Voice_File_Link
+Voice_File_Name
 Written_Response
 Reflection_1
 Reflection_2
+Submission_Time
         """,
         language="text"
     )
 
 
-# -------------------------------------------------------
-# Session State
-# -------------------------------------------------------
+def create_sample_data():
+    data = {
+        "Student_ID": ["PST01", "PST01", "PST02"],
+        "Name": ["Participant 1", "Participant 1", "Participant 2"],
+        "Semester": ["B.Ed. Semester II", "B.Ed. Semester II", "B.Ed. Semester II"],
+        "Pedagogy_Subject": ["Pedagogy of Mathematics", "Pedagogy of Mathematics", "Pedagogy of Science"],
+        "Task_No": ["Task 1", "Task 2", "Task 1"],
+        "Prompt_Type": ["Misconception Diagnosis", "Classroom Response", "Misconception Diagnosis"],
+        "Prompt": [
+            TASK_BANK["Task 1"]["Prompt"],
+            TASK_BANK["Task 2"]["Prompt"],
+            TASK_BANK["Task 1"]["Prompt"]
+        ],
+        "Voice_File_Name": ["sample_audio_1.mp3", "sample_audio_2.mp3", "sample_audio_3.mp3"],
+        "Written_Response": [
+            "I will first identify the misconception and use fraction strips to explain the idea.",
+            "I will assign group roles and encourage participation through peer support.",
+            "I will use concrete examples and ask the learner to compare fractions visually."
+        ],
+        "Reflection_1": [
+            "The learner is confused between denominator size and fraction value.",
+            "The issue may be lack of role clarity or confidence.",
+            "The learner is comparing numbers without understanding part-whole relation."
+        ],
+        "Reflection_2": [
+            "I will use paper folding or fraction circles.",
+            "I will use group roles and guided participation.",
+            "I will use diagrams and examples."
+        ],
+        "Submission_Time": [
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ]
+    }
 
-if "data" not in st.session_state:
-    st.session_state.data = None
+    df = pd.DataFrame(data)
 
+    for col in RUBRIC_COLUMNS:
+        df[col] = np.nan
+
+    df["Feedback"] = ""
+
+    return calculate_scores(df)
+
+
+initialize_session()
 
 # -------------------------------------------------------
 # Sidebar
 # -------------------------------------------------------
 
 st.sidebar.title("🎙️ VoiceBridge-PST")
-st.sidebar.caption("Assessment Analytics Workspace")
+st.sidebar.caption("Activity and Analytics Platform")
 
 page = st.sidebar.radio(
-    "Workspace Menu",
+    "Menu",
     [
         "Home",
-        "Upload Data",
+        "Activity Submission",
+        "Upload Existing Data",
         "Review Responses",
         "Score Responses",
-        "Individual Profile",
-        "Group Analytics",
+        "Diagnostic Profile",
+        "Task Analytics",
         "Export Data"
     ]
 )
 
 st.sidebar.divider()
 
-if st.session_state.data is not None:
-    current_df = calculate_scores(st.session_state.data)
+current_df = calculate_scores(st.session_state.data)
+
+if len(current_df) > 0:
     st.sidebar.metric("Participants", current_df["Student_ID"].nunique())
-    st.sidebar.metric("Responses", len(current_df))
+    st.sidebar.metric("Submissions", len(current_df))
 else:
-    st.sidebar.info("Upload response data to begin.")
+    st.sidebar.info("No submissions yet.")
 
 
 # -------------------------------------------------------
@@ -232,8 +257,8 @@ else:
 # -------------------------------------------------------
 
 if page == "Home":
-    st.title("VoiceBridge-PST Analytics Dashboard")
-    st.subheader("Voice-First Micro-Pedagogical Reasoning Assessment for Pre-Service Teachers")
+    st.title("VoiceBridge-PST Dashboard")
+    st.subheader("Voice-First Micro-Pedagogical Reasoning Activity and Analytics Platform")
 
     st.markdown("---")
 
@@ -252,22 +277,26 @@ if page == "Home":
 
     st.markdown("---")
 
-    st.markdown("## Purpose of the Dashboard")
+    st.markdown("## Purpose")
 
     st.markdown("""
-    The **VoiceBridge-PST Analytics Dashboard** is a web-based researcher workspace designed to support 
-    the review, scoring, and analysis of pre-service teachers’ micro-pedagogical reasoning responses.
+    The **VoiceBridge-PST Dashboard** is a web-based activity and analytics platform designed for 
+    voice-first micro-pedagogical reasoning assessment among pre-service teachers.
 
-    The dashboard may be used for:
-    """)
+    It enables pre-service teachers to respond to short pedagogical prompts through:
 
-    st.markdown("""
-    - rubric-based assessment,
-    - response review,
-    - individual diagnostic profiling,
-    - group-level analysis,
-    - research-based intervention studies,
-    - teacher-education assessment.
+    - voice reasoning,
+    - short written pedagogical response,
+    - reflective response.
+
+    It also enables the teacher educator or researcher to:
+
+    - review submissions,
+    - score responses using a rubric,
+    - examine voice–written alignment,
+    - generate diagnostic profiles,
+    - analyse task-wise performance,
+    - export scored data.
     """)
 
     st.markdown("---")
@@ -275,7 +304,7 @@ if page == "Home":
     st.markdown("## Dashboard Workflow")
 
     st.markdown("""
-    **Upload Data → Review Responses → Score Responses → Individual Profile → Group Analytics → Export Data**
+    **Activity Submission → Review Responses → Score Responses → Diagnostic Profile → Task Analytics → Export Data**
     """)
 
     st.markdown("---")
@@ -292,32 +321,138 @@ if page == "Home":
     7. Voice–Written Alignment  
     """)
 
-    st.markdown("---")
-
-    st.markdown("## Required Data Format")
-    show_required_columns()
-
-    sample_df = create_sample_template()
-    sample_excel = convert_df_to_excel(sample_df)
-
-    st.download_button(
-        label="Download Sample Excel Template",
-        data=sample_excel,
-        file_name="VoiceBridge_PST_Sample_Template.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    st.info(
+        "For broad use, this app should later be connected with Google Sheets, Firebase, Supabase, or another database. "
+        "The present version is suitable for testing and demonstration."
     )
 
 
 # -------------------------------------------------------
-# Page 2: Upload Data
+# Page 2: Activity Submission
 # -------------------------------------------------------
 
-elif page == "Upload Data":
-    st.title("Upload Data")
+elif page == "Activity Submission":
+    st.title("Pre-service Teacher Activity Submission")
 
     st.markdown("""
-    Upload the response dataset in Excel or CSV format.  
-    The uploaded file should contain the required columns listed below.
+    Complete the activity by reading the prompt, uploading your audio response, writing a short pedagogical response, 
+    and submitting your reflections.
+    """)
+
+    st.divider()
+
+    with st.form("activity_submission_form", clear_on_submit=True):
+        st.markdown("### Participant Details")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            student_id = st.text_input("Student ID / Participant Code", placeholder="Example: PST01")
+            name = st.text_input("Name", placeholder="Optional")
+
+        with col2:
+            semester = st.selectbox(
+                "Semester",
+                ["B.Ed. Semester I", "B.Ed. Semester II", "B.Ed. Semester III", "B.Ed. Semester IV", "Other"]
+            )
+
+            pedagogy_subject = st.selectbox(
+                "Pedagogy Subject",
+                [
+                    "Pedagogy of Mathematics",
+                    "Pedagogy of Science",
+                    "Pedagogy of Social Science",
+                    "Pedagogy of English",
+                    "Pedagogy of Hindi",
+                    "Pedagogy of Commerce",
+                    "Pedagogy of Computer Science",
+                    "Other"
+                ]
+            )
+
+        st.markdown("### Select Task")
+
+        task_no = st.selectbox("Task Number", list(TASK_BANK.keys()))
+        prompt_type = TASK_BANK[task_no]["Prompt_Type"]
+        prompt = TASK_BANK[task_no]["Prompt"]
+
+        st.markdown("### Pedagogical Prompt")
+        st.info(prompt)
+
+        st.markdown("### Voice Reasoning")
+        st.caption("Record your oral explanation on your phone/laptop and upload the audio file here. Suggested duration: 2–3 minutes.")
+
+        audio_file = st.file_uploader(
+            "Upload Audio Response",
+            type=["mp3", "wav", "m4a", "ogg"]
+        )
+
+        st.markdown("### Written Pedagogical Response")
+        written_response = st.text_area(
+            "Write a short response of about 150–200 words.",
+            height=180
+        )
+
+        st.markdown("### Reflection")
+        reflection_1 = st.text_area(
+            "Reflection 1: What pedagogical issue, learner difficulty, or misconception did you identify?",
+            height=100
+        )
+
+        reflection_2 = st.text_area(
+            "Reflection 2: What example, activity, or teaching strategy would you use?",
+            height=100
+        )
+
+        submitted = st.form_submit_button("Submit Response", type="primary")
+
+    if submitted:
+        if not student_id.strip():
+            st.error("Please enter Student ID / Participant Code.")
+        elif audio_file is None:
+            st.error("Please upload an audio response.")
+        elif not written_response.strip():
+            st.error("Please write the pedagogical response.")
+        else:
+            audio_key = f"{student_id}_{task_no}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{audio_file.name}"
+            st.session_state.audio_files[audio_key] = audio_file.getvalue()
+
+            new_row = {
+                "Student_ID": student_id.strip(),
+                "Name": name.strip(),
+                "Semester": semester,
+                "Pedagogy_Subject": pedagogy_subject,
+                "Task_No": task_no,
+                "Prompt_Type": prompt_type,
+                "Prompt": prompt,
+                "Voice_File_Name": audio_key,
+                "Written_Response": written_response.strip(),
+                "Reflection_1": reflection_1.strip(),
+                "Reflection_2": reflection_2.strip(),
+                "Submission_Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "Feedback": ""
+            }
+
+            for col in RUBRIC_COLUMNS:
+                new_row[col] = np.nan
+
+            new_df = pd.DataFrame([new_row])
+            st.session_state.data = pd.concat([st.session_state.data, new_df], ignore_index=True)
+            st.session_state.data = calculate_scores(st.session_state.data)
+
+            st.success("Your response has been submitted successfully.")
+            st.balloons()
+
+
+# -------------------------------------------------------
+# Page 3: Upload Existing Data
+# -------------------------------------------------------
+
+elif page == "Upload Existing Data":
+    st.title("Upload Existing Data")
+
+    st.markdown("""
+    Use this page if responses were collected through Google Forms, Excel, or another external system.
     """)
 
     with st.expander("View required columns"):
@@ -335,7 +470,7 @@ elif page == "Upload Data":
             else:
                 df = pd.read_excel(uploaded_file)
 
-            missing_cols = validate_columns(df)
+            missing_cols = [col for col in REQUIRED_COLUMNS if col not in df.columns]
 
             if missing_cols:
                 st.error("The uploaded file is missing required columns:")
@@ -345,6 +480,9 @@ elif page == "Upload Data":
                     if col not in df.columns:
                         df[col] = np.nan
 
+                if "Feedback" not in df.columns:
+                    df["Feedback"] = ""
+
                 df = calculate_scores(df)
                 st.session_state.data = df
 
@@ -352,8 +490,8 @@ elif page == "Upload Data":
 
                 col1, col2, col3 = st.columns(3)
                 col1.metric("Participants", df["Student_ID"].nunique())
-                col2.metric("Responses", len(df))
-                col3.metric("Groups", df["Group"].nunique())
+                col2.metric("Submissions", len(df))
+                col3.metric("Subjects", df["Pedagogy_Subject"].nunique())
 
                 st.markdown("### Data Preview")
                 st.dataframe(df, use_container_width=True)
@@ -366,8 +504,7 @@ elif page == "Upload Data":
     st.markdown("### Use Sample Data")
 
     if st.button("Load Sample Data"):
-        df = create_sample_template()
-        df = calculate_scores(df)
+        df = create_sample_data()
         st.session_state.data = df
 
         st.success("Sample data loaded successfully.")
@@ -375,17 +512,17 @@ elif page == "Upload Data":
 
 
 # -------------------------------------------------------
-# Page 3: Review Responses
+# Page 4: Review Responses
 # -------------------------------------------------------
 
 elif page == "Review Responses":
     st.title("Review Responses")
 
-    if st.session_state.data is None:
-        st.warning("Please upload data first.")
-    else:
-        df = calculate_scores(st.session_state.data)
+    df = calculate_scores(st.session_state.data)
 
+    if len(df) == 0:
+        st.warning("No responses available yet.")
+    else:
         col1, col2 = st.columns(2)
 
         with col1:
@@ -408,8 +545,7 @@ elif page == "Review Responses":
         st.subheader(f"{selected_student} | {selected_task}")
 
         info_col1, info_col2, info_col3 = st.columns(3)
-
-        info_col1.metric("Group", row["Group"])
+        info_col1.metric("Subject", row["Pedagogy_Subject"])
         info_col2.metric("Prompt Type", row["Prompt_Type"])
         info_col3.metric("Current Score", f"{row['Total_Score']:.0f}/{MAX_SCORE_PER_TASK}")
 
@@ -418,31 +554,28 @@ elif page == "Review Responses":
 
         st.markdown("### Audio Response")
 
-        if pd.notna(row["Voice_File_Link"]) and str(row["Voice_File_Link"]).strip() != "":
-            st.markdown(f"[Open Audio Response]({row['Voice_File_Link']})")
-        else:
-            st.caption("No audio link available.")
+        audio_name = row["Voice_File_Name"]
 
-        st.markdown("### Written Note")
+        if audio_name in st.session_state.audio_files:
+            audio_bytes = st.session_state.audio_files[audio_name]
+            st.audio(audio_bytes)
+        else:
+            st.caption("Audio file is not available in this session. If using external data, keep the audio link or file separately.")
+
+        st.markdown("### Written Pedagogical Response")
         st.write(row["Written_Response"])
 
         st.markdown("### Reflections")
 
-        ref_col1, ref_col2 = st.columns(2)
+        col_a, col_b = st.columns(2)
 
-        with ref_col1:
+        with col_a:
             st.markdown("**Diagnostic Reflection**")
-            if pd.notna(row["Reflection_1"]) and str(row["Reflection_1"]).strip() != "":
-                st.write(row["Reflection_1"])
-            else:
-                st.caption("Not available.")
+            st.write(row["Reflection_1"] if pd.notna(row["Reflection_1"]) else "")
 
-        with ref_col2:
+        with col_b:
             st.markdown("**Strategy Reflection**")
-            if pd.notna(row["Reflection_2"]) and str(row["Reflection_2"]).strip() != "":
-                st.write(row["Reflection_2"])
-            else:
-                st.caption("Not available.")
+            st.write(row["Reflection_2"] if pd.notna(row["Reflection_2"]) else "")
 
         st.markdown("### Existing Scores")
 
@@ -453,19 +586,23 @@ elif page == "Review Responses":
 
         st.table(pd.DataFrame(score_display.items(), columns=["Dimension", "Score"]))
 
+        if pd.notna(row.get("Feedback", "")) and str(row.get("Feedback", "")).strip():
+            st.markdown("### Feedback")
+            st.info(row["Feedback"])
+
 
 # -------------------------------------------------------
-# Page 4: Score Responses
+# Page 5: Score Responses
 # -------------------------------------------------------
 
 elif page == "Score Responses":
     st.title("Score Responses")
 
-    if st.session_state.data is None:
-        st.warning("Please upload data first.")
-    else:
-        df = st.session_state.data.copy()
+    df = st.session_state.data.copy()
 
+    if len(df) == 0:
+        st.warning("No responses available yet.")
+    else:
         col1, col2 = st.columns(2)
 
         with col1:
@@ -498,12 +635,15 @@ elif page == "Score Responses":
         with st.expander("View Response Material"):
             st.markdown("**Audio Response**")
 
-            if pd.notna(row["Voice_File_Link"]) and str(row["Voice_File_Link"]).strip() != "":
-                st.markdown(f"[Open Audio Response]({row['Voice_File_Link']})")
-            else:
-                st.caption("No audio link available.")
+            audio_name = row["Voice_File_Name"]
 
-            st.markdown("**Written Note**")
+            if audio_name in st.session_state.audio_files:
+                audio_bytes = st.session_state.audio_files[audio_name]
+                st.audio(audio_bytes)
+            else:
+                st.caption("Audio file is not available in this session.")
+
+            st.markdown("**Written Pedagogical Response**")
             st.write(row["Written_Response"])
 
             st.markdown("**Diagnostic Reflection**")
@@ -515,6 +655,7 @@ elif page == "Score Responses":
         st.markdown("### Rubric Scores")
 
         scores = {}
+
         left_col, right_col = st.columns(2)
 
         for i, rubric_col in enumerate(RUBRIC_COLUMNS):
@@ -543,31 +684,45 @@ elif page == "Score Responses":
         col_a.metric("Total Score", f"{total_score}/{MAX_SCORE_PER_TASK}")
         col_b.metric("Percentage", f"{percentage:.2f}%")
 
-        if st.button("Save Scores", type="primary"):
+        feedback_text = st.text_area(
+            "Teacher Educator Feedback",
+            value=row["Feedback"] if "Feedback" in df.columns and pd.notna(row["Feedback"]) else "",
+            height=120
+        )
+
+        if st.button("Generate Suggested Feedback"):
+            temp_row = row.copy()
+            for col, score in scores.items():
+                temp_row[col] = score
+            suggested_feedback = generate_feedback(temp_row)
+            st.info(suggested_feedback)
+
+        if st.button("Save Scores and Feedback", type="primary"):
             for rubric_col, score in scores.items():
                 df.loc[idx, rubric_col] = score
+
+            df.loc[idx, "Feedback"] = feedback_text.strip()
 
             df = calculate_scores(df)
             st.session_state.data = df
 
-            st.success("Scores saved successfully.")
+            st.success("Scores and feedback saved successfully.")
 
-        st.markdown("### Scoring Guide")
-        st.caption("1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent")
+        st.caption("Scoring guide: 1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent")
 
 
 # -------------------------------------------------------
-# Page 5: Individual Profile
+# Page 6: Diagnostic Profile
 # -------------------------------------------------------
 
-elif page == "Individual Profile":
-    st.title("Individual Profile")
+elif page == "Diagnostic Profile":
+    st.title("Diagnostic Profile")
 
-    if st.session_state.data is None:
-        st.warning("Please upload data first.")
+    df = calculate_scores(st.session_state.data)
+
+    if len(df) == 0:
+        st.warning("No responses available yet.")
     else:
-        df = calculate_scores(st.session_state.data)
-
         student_ids = sorted(df["Student_ID"].dropna().unique())
         selected_student = st.selectbox("Select Student ID", student_ids)
 
@@ -578,16 +733,23 @@ elif page == "Individual Profile":
 
         st.subheader(f"Diagnostic Profile: {selected_student}")
 
+        name_value = student_df["Name"].iloc[0] if "Name" in student_df.columns else ""
+        semester_value = student_df["Semester"].iloc[0] if "Semester" in student_df.columns else ""
+        subject_value = student_df["Pedagogy_Subject"].iloc[0] if "Pedagogy_Subject" in student_df.columns else ""
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Name", name_value if str(name_value).strip() else "Not provided")
+        col2.metric("Semester", semester_value)
+        col3.metric("Subject", subject_value)
+
         total_score = student_df["Total_Score"].sum()
         max_possible = len(student_df) * MAX_SCORE_PER_TASK
         overall_percentage = (total_score / max_possible) * 100 if max_possible else 0
 
-        col1, col2, col3, col4 = st.columns(4)
-
-        col1.metric("Group", student_df["Group"].iloc[0])
-        col2.metric("Total Score", f"{total_score:.0f}/{max_possible}")
-        col3.metric("Overall %", f"{overall_percentage:.2f}%")
-        col4.metric("Tasks", len(student_df))
+        col4, col5, col6 = st.columns(3)
+        col4.metric("Total Score", f"{total_score:.0f}/{max_possible}")
+        col5.metric("Overall %", f"{overall_percentage:.2f}%")
+        col6.metric("Tasks Submitted", len(student_df))
 
         rubric_means = student_df[RUBRIC_COLUMNS].mean(numeric_only=True)
 
@@ -601,7 +763,6 @@ elif page == "Individual Profile":
             st.markdown("### Dimension-wise Profile")
 
             fig, ax = plt.subplots(figsize=(10, 5))
-
             labels = [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS]
             values = [rubric_means[col] for col in RUBRIC_COLUMNS]
 
@@ -637,124 +798,99 @@ elif page == "Individual Profile":
         else:
             st.info("Rubric scores are not available yet.")
 
-        st.markdown("### Individual Data")
+        st.markdown("### Submitted Task Data")
         st.dataframe(student_df, use_container_width=True)
 
 
 # -------------------------------------------------------
-# Page 6: Group Analytics
+# Page 7: Task Analytics
 # -------------------------------------------------------
 
-elif page == "Group Analytics":
-    st.title("Group Analytics")
+elif page == "Task Analytics":
+    st.title("Task Analytics")
 
-    if st.session_state.data is None:
-        st.warning("Please upload data first.")
+    df = calculate_scores(st.session_state.data)
+
+    if len(df) == 0:
+        st.warning("No responses available yet.")
     else:
-        df = calculate_scores(st.session_state.data)
-
         st.subheader("Dataset Summary")
 
         col1, col2, col3, col4 = st.columns(4)
 
         col1.metric("Participants", df["Student_ID"].nunique())
-        col2.metric("Responses", len(df))
-        col3.metric("Groups", df["Group"].nunique())
+        col2.metric("Submissions", len(df))
+        col3.metric("Pedagogy Subjects", df["Pedagogy_Subject"].nunique())
         col4.metric("Average Score", f"{df['Total_Score'].mean():.2f}")
 
         st.divider()
 
-        st.markdown("### Group-wise Score Summary")
+        st.markdown("### Task-wise Mean Score")
 
-        group_summary = (
-            df.groupby("Group")["Total_Score"]
+        task_summary = (
+            df.groupby("Task_No")["Total_Score"]
             .agg(["mean", "std", "count"])
             .reset_index()
         )
 
-        group_summary.rename(
+        task_summary.rename(
             columns={
                 "mean": "Mean Score",
                 "std": "SD",
-                "count": "Responses"
+                "count": "Submissions"
             },
             inplace=True
         )
 
-        st.dataframe(group_summary, use_container_width=True)
+        task_summary["Task_Order"] = task_summary["Task_No"].map(clean_task_order)
+        task_summary = task_summary.sort_values("Task_Order")
 
-        fig, ax = plt.subplots(figsize=(7, 4))
+        st.dataframe(task_summary.drop(columns=["Task_Order"]), use_container_width=True)
 
-        ax.bar(group_summary["Group"], group_summary["Mean Score"])
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.bar(task_summary["Task_No"], task_summary["Mean Score"])
+        ax.set_xlabel("Task")
         ax.set_ylabel("Mean Total Score")
         ax.set_ylim(0, MAX_SCORE_PER_TASK)
-
         st.pyplot(fig)
 
-        st.markdown("### Task-wise Progress by Group")
+        st.markdown("### Dimension-wise Mean Scores")
 
-        task_group_summary = (
-            df.groupby(["Task_No", "Group"])["Total_Score"]
-            .mean()
-            .reset_index()
-        )
+        rubric_mean = df[RUBRIC_COLUMNS].mean(numeric_only=True)
 
-        task_group_summary["Task_Order"] = task_group_summary["Task_No"].map(clean_task_order)
-        task_group_summary = task_group_summary.sort_values("Task_Order")
+        fig2, ax2 = plt.subplots(figsize=(10, 5))
+        labels = [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS]
+        values = [rubric_mean[col] for col in RUBRIC_COLUMNS]
 
-        fig2, ax2 = plt.subplots(figsize=(8, 4))
-
-        for group in task_group_summary["Group"].unique():
-            group_data = task_group_summary[task_group_summary["Group"] == group]
-
-            ax2.plot(
-                group_data["Task_No"],
-                group_data["Total_Score"],
-                marker="o",
-                label=group
-            )
-
-        ax2.set_xlabel("Task")
-        ax2.set_ylabel("Mean Total Score")
-        ax2.set_ylim(0, MAX_SCORE_PER_TASK)
-        ax2.legend()
-        ax2.tick_params(axis="x", rotation=45)
-
+        ax2.bar(labels, values)
+        ax2.set_ylabel("Average Score")
+        ax2.set_ylim(0, 5)
+        ax2.tick_params(axis="x", rotation=75)
         st.pyplot(fig2)
 
-        st.markdown("### Dimension-wise Group Profile")
+        st.markdown("### Pedagogy Subject-wise Summary")
 
-        rubric_mean = (
-            df.groupby("Group")[RUBRIC_COLUMNS]
-            .mean(numeric_only=True)
+        subject_summary = (
+            df.groupby("Pedagogy_Subject")["Total_Score"]
+            .agg(["mean", "std", "count"])
             .reset_index()
         )
 
-        st.dataframe(rubric_mean, use_container_width=True)
-
-        selected_group = st.selectbox(
-            "Select group for dimension chart",
-            rubric_mean["Group"].unique()
+        subject_summary.rename(
+            columns={
+                "mean": "Mean Score",
+                "std": "SD",
+                "count": "Submissions"
+            },
+            inplace=True
         )
 
-        group_row = rubric_mean[rubric_mean["Group"] == selected_group].iloc[0]
-
-        labels = [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS]
-        values = [group_row[col] for col in RUBRIC_COLUMNS]
-
-        fig3, ax3 = plt.subplots(figsize=(10, 5))
-
-        ax3.bar(labels, values)
-        ax3.set_ylabel("Average Score")
-        ax3.set_ylim(0, 5)
-        ax3.tick_params(axis="x", rotation=75)
-
-        st.pyplot(fig3)
+        st.dataframe(subject_summary, use_container_width=True)
 
         st.markdown("### Completion Status")
 
         completion = (
-            df.groupby(["Student_ID", "Group"])["Task_No"]
+            df.groupby(["Student_ID", "Name", "Semester", "Pedagogy_Subject"])["Task_No"]
             .count()
             .reset_index()
         )
@@ -765,18 +901,18 @@ elif page == "Group Analytics":
 
 
 # -------------------------------------------------------
-# Page 7: Export Data
+# Page 8: Export Data
 # -------------------------------------------------------
 
 elif page == "Export Data":
     st.title("Export Data")
 
-    if st.session_state.data is None:
-        st.warning("Please upload data first.")
-    else:
-        df = calculate_scores(st.session_state.data)
+    df = calculate_scores(st.session_state.data)
 
-        st.markdown("Download the scored dataset for further statistical analysis.")
+    if len(df) == 0:
+        st.warning("No responses available yet.")
+    else:
+        st.markdown("Download the submitted and scored dataset for further analysis.")
 
         csv_data = df.to_csv(index=False).encode("utf-8")
         excel_data = convert_df_to_excel(df)
@@ -787,7 +923,7 @@ elif page == "Export Data":
             st.download_button(
                 label="Download CSV",
                 data=csv_data,
-                file_name="VoiceBridge_PST_Scored_Data.csv",
+                file_name="VoiceBridge_PST_Data.csv",
                 mime="text/csv"
             )
 
@@ -795,9 +931,14 @@ elif page == "Export Data":
             st.download_button(
                 label="Download Excel",
                 data=excel_data,
-                file_name="VoiceBridge_PST_Scored_Data.xlsx",
+                file_name="VoiceBridge_PST_Data.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
         st.markdown("### Data Preview")
         st.dataframe(df, use_container_width=True)
+
+        st.warning(
+            "Important: In this testing version, audio files are stored only during the active app session. "
+            "For real data collection, connect the app to cloud storage or ask participants to upload audio through Google Forms/Drive."
+        )
