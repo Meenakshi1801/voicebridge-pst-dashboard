@@ -4,11 +4,19 @@ import numpy as np
 from io import BytesIO
 from datetime import datetime
 
+# -------------------------------------------------------
+# Page Configuration
+# -------------------------------------------------------
+
 st.set_page_config(
     page_title="VoiceBridge-PST Dashboard",
     page_icon="🎙️",
     layout="wide"
 )
+
+# -------------------------------------------------------
+# Rubric Dimensions
+# -------------------------------------------------------
 
 RUBRIC_COLUMNS = [
     "Conceptual_Clarity",
@@ -30,7 +38,7 @@ RUBRIC_LABELS = {
     "Voice_Written_Alignment": "Voice-Written Alignment"
 }
 
-MAX_SCORE_PER_TASK = 35
+MAX_SCORE_PER_TASK = len(RUBRIC_COLUMNS) * 5
 
 REQUIRED_COLUMNS = [
     "Student_ID",
@@ -47,6 +55,10 @@ REQUIRED_COLUMNS = [
     "Submission_Time"
 ]
 
+# -------------------------------------------------------
+# Subject-wise Prompt Bank: 10 Tasks per Subject
+# -------------------------------------------------------
+
 TASK_BANK = {
     "Pedagogy of Mathematics": [
         {"Task_ID": "MATH-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VI student says that a larger denominator means a larger fraction. How will you respond as a teacher?"},
@@ -60,6 +72,7 @@ TASK_BANK = {
         {"Task_ID": "MATH-09", "Task_Category": "Use of Example / Analogy", "Prompt": "How would you explain ratio using examples from daily life?"},
         {"Task_ID": "MATH-10", "Task_Category": "Error Analysis", "Prompt": "A student thinks 0.5 is smaller than 0.25 because 5 is smaller than 25. How will you respond?"}
     ],
+
     "Pedagogy of Science": [
         {"Task_ID": "SCI-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VII student says that heat and temperature are the same. How will you respond as a teacher?"},
         {"Task_ID": "SCI-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of evaporation using daily-life examples?"},
@@ -72,6 +85,7 @@ TASK_BANK = {
         {"Task_ID": "SCI-09", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between renewable and non-renewable resources?"},
         {"Task_ID": "SCI-10", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says that heavier objects fall faster than lighter objects. How will you respond?"}
     ],
+
     "Pedagogy of Social Science": [
         {"Task_ID": "SOC-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A Class VIII student says that democracy only means voting. How will you respond as a teacher?"},
         {"Task_ID": "SOC-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of resources using local examples?"},
@@ -84,6 +98,7 @@ TASK_BANK = {
         {"Task_ID": "SOC-09", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between equality and equity to students?"},
         {"Task_ID": "SOC-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess whether students can connect a social science concept with current society?"}
     ],
+
     "Pedagogy of English": [
         {"Task_ID": "ENG-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A student can read a passage aloud but cannot infer meaning. How will you support the learner?"},
         {"Task_ID": "ENG-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce descriptive writing using classroom objects?"},
@@ -96,6 +111,7 @@ TASK_BANK = {
         {"Task_ID": "ENG-09", "Task_Category": "Concept Explanation", "Prompt": "How would you teach the idea of character analysis in a short story?"},
         {"Task_ID": "ENG-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess students' speaking ability without making them anxious?"}
     ],
+
     "Pedagogy of Hindi": [
         {"Task_ID": "HIN-01", "Task_Category": "Misconception Diagnosis", "Prompt": "A student memorizes a kavita but cannot explain its bhavarth. How will you respond?"},
         {"Task_ID": "HIN-02", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce muhavare using daily-life situations?"},
@@ -108,6 +124,7 @@ TASK_BANK = {
         {"Task_ID": "HIN-09", "Task_Category": "Concept Explanation", "Prompt": "How would you teach patra lekhan in a meaningful classroom way?"},
         {"Task_ID": "HIN-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess students' understanding of a poem beyond recitation?"}
     ],
+
     "Pedagogy of Commerce": [
         {"Task_ID": "COM-01", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between profit and revenue using a simple classroom example?"},
         {"Task_ID": "COM-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says that sales and profit are the same. How will you respond?"},
@@ -120,6 +137,7 @@ TASK_BANK = {
         {"Task_ID": "COM-09", "Task_Category": "Concept Explanation", "Prompt": "How would you introduce the concept of banking services using local examples?"},
         {"Task_ID": "COM-10", "Task_Category": "Assessment Decision", "Prompt": "How would you assess whether students can connect business concepts with real market situations?"}
     ],
+
     "Pedagogy of Computer Science": [
         {"Task_ID": "CS-01", "Task_Category": "Concept Explanation", "Prompt": "How would you explain the difference between hardware and software using classroom examples?"},
         {"Task_ID": "CS-02", "Task_Category": "Misconception Diagnosis", "Prompt": "A student says that the internet and the web are the same. How will you respond?"},
@@ -136,29 +154,40 @@ TASK_BANK = {
 
 PEDAGOGY_SUBJECTS = list(TASK_BANK.keys())
 
+# -------------------------------------------------------
+# Helper Functions
+# -------------------------------------------------------
+
 def init_state():
     if "data" not in st.session_state:
-        cols = REQUIRED_COLUMNS + RUBRIC_COLUMNS + ["Total_Score", "Percentage", "Feedback"]
-        st.session_state.data = pd.DataFrame(columns=cols)
+        all_columns = REQUIRED_COLUMNS + RUBRIC_COLUMNS + ["Total_Score", "Percentage", "Feedback"]
+        st.session_state.data = pd.DataFrame(columns=all_columns)
+
     if "audio_files" not in st.session_state:
         st.session_state.audio_files = {}
-    if "page" not in st.session_state:
-        st.session_state.page = "Home"
+
 
 def calculate_scores(df):
     df = df.copy()
+
     for col in RUBRIC_COLUMNS:
         if col not in df.columns:
             df[col] = np.nan
+
     df["Total_Score"] = df[RUBRIC_COLUMNS].sum(axis=1, skipna=True)
     df["Percentage"] = (df["Total_Score"] / MAX_SCORE_PER_TASK) * 100
+
     return df
+
 
 def to_excel(df):
     output = BytesIO()
+
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="VoiceBridge_PST_Data")
+
     return output.getvalue()
+
 
 def task_sort_key(task_id):
     try:
@@ -166,16 +195,21 @@ def task_sort_key(task_id):
     except Exception:
         return 0
 
+
 def generate_feedback(row):
     scores = {}
+
     for col in RUBRIC_COLUMNS:
         value = row.get(col, np.nan)
         if pd.notna(value):
             scores[col] = value
+
     if not scores:
         return "Rubric scores are not available for this response."
+
     strongest = max(scores, key=scores.get)
     weakest = min(scores, key=scores.get)
+
     feedback_map = {
         "Conceptual_Clarity": "Strengthen clarity of the core concept or pedagogical issue.",
         "Pedagogical_Reasoning": "Give stronger justification for the selected teaching response.",
@@ -185,52 +219,75 @@ def generate_feedback(row):
         "Reflective_Thinking": "Add deeper reflection on strengths, limitations, and possible improvement.",
         "Voice_Written_Alignment": "Ensure that the written response clearly follows the oral reasoning."
     }
+
     return (
         f"Strongest area: {RUBRIC_LABELS[strongest]}. "
         f"Needs improvement: {RUBRIC_LABELS[weakest]}. "
         f"Suggested action: {feedback_map[weakest]}"
     )
 
-def go_to(page_name):
-    st.session_state.page = page_name
 
 init_state()
+
+# -------------------------------------------------------
+# Sidebar Navigation
+# -------------------------------------------------------
 
 st.sidebar.title("🎙️ VoiceBridge-PST")
 st.sidebar.caption("Activity and Analytics Platform")
 
 st.sidebar.markdown("### For Participants")
-if st.sidebar.button("Activity Submission", use_container_width=True):
-    go_to("Activity Submission")
+participant_page = st.sidebar.radio(
+    "Participant Menu",
+    ["Activity Submission"],
+    label_visibility="collapsed"
+)
 
 st.sidebar.markdown("### For Teacher Educator")
-if st.sidebar.button("Home", use_container_width=True):
-    go_to("Home")
-if st.sidebar.button("Review Responses", use_container_width=True):
-    go_to("Review Responses")
-if st.sidebar.button("Score Responses", use_container_width=True):
-    go_to("Score Responses")
-if st.sidebar.button("Diagnostic Profile", use_container_width=True):
-    go_to("Diagnostic Profile")
-if st.sidebar.button("Task Analytics", use_container_width=True):
-    go_to("Task Analytics")
-if st.sidebar.button("Download Data", use_container_width=True):
-    go_to("Download Data")
+teacher_page = st.sidebar.radio(
+    "Teacher Educator Menu",
+    [
+        "Home",
+        "Review Responses",
+        "Score Responses",
+        "Diagnostic Profile",
+        "Task Analytics",
+        "Download Data"
+    ],
+    label_visibility="collapsed"
+)
+
+page = st.sidebar.selectbox(
+    "Go to",
+    [
+        "Home",
+        "Activity Submission",
+        "Review Responses",
+        "Score Responses",
+        "Diagnostic Profile",
+        "Task Analytics",
+        "Download Data"
+    ]
+)
 
 st.sidebar.divider()
 
 current_df = calculate_scores(st.session_state.data)
+
 if len(current_df) > 0:
     st.sidebar.metric("Participants", current_df["Student_ID"].nunique())
     st.sidebar.metric("Submissions", len(current_df))
 else:
     st.sidebar.info("No submissions yet.")
 
-page = st.session_state.page
+# -------------------------------------------------------
+# Home Page
+# -------------------------------------------------------
 
 if page == "Home":
     st.markdown("# 🎙️ VoiceBridge-PST Dashboard")
     st.markdown("### Voice-First Micro-Pedagogical Reasoning Activity and Analytics Platform")
+
     st.markdown(
         """
         <div style="margin-top: 6px; line-height: 1.25;">
@@ -245,6 +302,7 @@ if page == "Home":
     )
 
     st.markdown("---")
+
     st.markdown("## Purpose")
     st.markdown("""
     The **VoiceBridge-PST Dashboard** is a web-based activity and analytics platform designed for 
@@ -258,39 +316,63 @@ if page == "Home":
     """)
 
     st.markdown("---")
+
     st.markdown("## Dashboard Workflow")
-    st.markdown("**Activity Submission -> Review Responses -> Score Responses -> Diagnostic Profile -> Task Analytics -> Download Data**")
+    st.markdown("**Activity Submission → Review Responses → Score Responses → Diagnostic Profile → Task Analytics → Download Data**")
 
     st.markdown("---")
+
     st.markdown("## Pedagogy Subjects Included")
     for subject in PEDAGOGY_SUBJECTS:
         st.markdown(f"- {subject}")
 
     st.markdown("---")
+
     st.markdown("## Assessment Dimensions")
     for i, col in enumerate(RUBRIC_COLUMNS, start=1):
         st.markdown(f"{i}. {RUBRIC_LABELS[col]}")
 
-    st.info("The current version is suitable for testing and demonstration. For broader use, connect the app with Google Sheets, Firebase, Supabase, or another database.")
+    st.info(
+        "The current version is suitable for testing and demonstration. "
+        "For broad institutional use, connect the app with Google Sheets, Firebase, Supabase, or another database."
+    )
+
+# -------------------------------------------------------
+# Activity Submission Page
+# -------------------------------------------------------
 
 elif page == "Activity Submission":
     st.title("Pre-service Teacher Activity Submission")
-    st.markdown("Select your pedagogy subject and task. Then upload your voice response, write a short pedagogical response, and submit your reflections.")
+
+    st.markdown("""
+    Select your pedagogy subject and task. Then upload your voice response, write a short pedagogical response, 
+    and submit your reflections.
+    """)
+
     st.divider()
 
     st.markdown("## Select Subject and Task")
-    c1, c2 = st.columns(2)
 
-    with c1:
+    col1, col2 = st.columns(2)
+
+    with col1:
         selected_subject = st.selectbox("Pedagogy Subject", PEDAGOGY_SUBJECTS)
 
     categories = sorted(set(task["Task_Category"] for task in TASK_BANK[selected_subject]))
 
-    with c2:
+    with col2:
         selected_category = st.selectbox("Task Category", categories)
 
-    filtered_tasks = [task for task in TASK_BANK[selected_subject] if task["Task_Category"] == selected_category]
-    task_labels = [f'{task["Task_ID"]} - {task["Prompt"][:80]}...' for task in filtered_tasks]
+    filtered_tasks = [
+        task for task in TASK_BANK[selected_subject]
+        if task["Task_Category"] == selected_category
+    ]
+
+    task_labels = [
+        f'{task["Task_ID"]} - {task["Prompt"][:80]}...'
+        for task in filtered_tasks
+    ]
+
     selected_label = st.selectbox("Select Prompt", task_labels)
     selected_index = task_labels.index(selected_label)
     selected_task = filtered_tasks[selected_index]
@@ -301,10 +383,12 @@ elif page == "Activity Submission":
 
     st.markdown("### Pedagogical Prompt")
     st.info(prompt)
+
     st.divider()
 
     with st.form("activity_form", clear_on_submit=True):
         st.markdown("## Participant Details")
+
         p1, p2 = st.columns(2)
 
         with p1:
@@ -312,19 +396,41 @@ elif page == "Activity Submission":
             name = st.text_input("Name", placeholder="Optional")
 
         with p2:
-            semester = st.selectbox("Semester", ["B.Ed. Semester I", "B.Ed. Semester II", "B.Ed. Semester III", "B.Ed. Semester IV"])
+            semester = st.selectbox(
+                "Semester",
+                [
+                    "B.Ed. Semester I",
+                    "B.Ed. Semester II",
+                    "B.Ed. Semester III",
+                    "B.Ed. Semester IV"
+                ]
+            )
             st.text_input("Selected Pedagogy Subject", value=selected_subject, disabled=True)
 
         st.markdown("## Voice Reasoning")
         st.caption("Record your oral explanation on your phone/laptop and upload the audio file. Suggested duration: 2-3 minutes.")
-        audio_file = st.file_uploader("Upload Audio Response", type=["mp3", "wav", "m4a", "ogg"])
+
+        audio_file = st.file_uploader(
+            "Upload Audio Response",
+            type=["mp3", "wav", "m4a", "ogg"]
+        )
 
         st.markdown("## Written Pedagogical Response")
-        written_response = st.text_area("Write a short response of about 150-200 words.", height=180)
+        written_response = st.text_area(
+            "Write a short response of about 150-200 words.",
+            height=180
+        )
 
         st.markdown("## Reflection")
-        reflection_1 = st.text_area("Reflection 1: What pedagogical issue, learner difficulty, error, or misconception did you identify?", height=100)
-        reflection_2 = st.text_area("Reflection 2: What example, activity, explanation, or teaching strategy would you use?", height=100)
+        reflection_1 = st.text_area(
+            "Reflection 1: What pedagogical issue, learner difficulty, error, or misconception did you identify?",
+            height=100
+        )
+
+        reflection_2 = st.text_area(
+            "Reflection 2: What example, activity, explanation, or teaching strategy would you use?",
+            height=100
+        )
 
         submitted = st.form_submit_button("Submit Response", type="primary")
 
@@ -338,9 +444,10 @@ elif page == "Activity Submission":
         else:
             safe_id = student_id.strip().replace(" ", "_")
             audio_key = f"{safe_id}_{task_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{audio_file.name}"
+
             st.session_state.audio_files[audio_key] = audio_file.getvalue()
 
-            row = {
+            new_row = {
                 "Student_ID": student_id.strip(),
                 "Name": name.strip(),
                 "Semester": semester,
@@ -357,23 +464,33 @@ elif page == "Activity Submission":
             }
 
             for col in RUBRIC_COLUMNS:
-                row[col] = np.nan
+                new_row[col] = np.nan
 
-            new_df = pd.DataFrame([row])
-            st.session_state.data = pd.concat([st.session_state.data, new_df], ignore_index=True)
+            new_df = pd.DataFrame([new_row])
+            st.session_state.data = pd.concat(
+                [st.session_state.data, new_df],
+                ignore_index=True
+            )
+
             st.session_state.data = calculate_scores(st.session_state.data)
 
             st.success("Your response has been submitted successfully.")
             st.balloons()
 
+# -------------------------------------------------------
+# Review Responses Page
+# -------------------------------------------------------
+
 elif page == "Review Responses":
     st.title("Review Responses")
+
     df = calculate_scores(st.session_state.data)
 
     if len(df) == 0:
         st.warning("No responses available yet.")
     else:
         r1, r2 = st.columns(2)
+
         with r1:
             student_ids = sorted(df["Student_ID"].dropna().unique())
             selected_student = st.selectbox("Select Student ID", student_ids)
@@ -381,12 +498,16 @@ elif page == "Review Responses":
         student_df = df[df["Student_ID"] == selected_student].copy()
 
         with r2:
-            task_ids = sorted(student_df["Task_ID"].dropna().unique(), key=task_sort_key)
+            task_ids = sorted(
+                student_df["Task_ID"].dropna().unique(),
+                key=task_sort_key
+            )
             selected_task = st.selectbox("Select Task", task_ids)
 
         row = student_df[student_df["Task_ID"] == selected_task].iloc[0]
 
         st.subheader(f"{selected_student} | {selected_task}")
+
         a, b, c = st.columns(3)
         a.metric("Subject", row["Pedagogy_Subject"])
         b.metric("Category", row["Task_Category"])
@@ -397,6 +518,7 @@ elif page == "Review Responses":
 
         st.markdown("### Audio Response")
         audio_name = row["Voice_File_Name"]
+
         if audio_name in st.session_state.audio_files:
             st.audio(st.session_state.audio_files[audio_name])
         else:
@@ -406,33 +528,44 @@ elif page == "Review Responses":
         st.write(row["Written_Response"])
 
         st.markdown("### Reflections")
+
         f1, f2 = st.columns(2)
+
         with f1:
             st.markdown("**Diagnostic Reflection**")
             st.write(row["Reflection_1"])
+
         with f2:
             st.markdown("**Strategy Reflection**")
             st.write(row["Reflection_2"])
 
         st.markdown("### Existing Scores")
+
         score_display = {
             RUBRIC_LABELS[col]: row[col] if pd.notna(row[col]) else "Not scored"
             for col in RUBRIC_COLUMNS
         }
+
         st.table(pd.DataFrame(score_display.items(), columns=["Dimension", "Score"]))
 
         if str(row.get("Feedback", "")).strip():
             st.markdown("### Feedback")
             st.info(row["Feedback"])
 
+# -------------------------------------------------------
+# Score Responses Page
+# -------------------------------------------------------
+
 elif page == "Score Responses":
     st.title("Score Responses")
+
     df = st.session_state.data.copy()
 
     if len(df) == 0:
         st.warning("No responses available yet.")
     else:
         s1, s2 = st.columns(2)
+
         with s1:
             student_ids = sorted(df["Student_ID"].dropna().unique())
             selected_student = st.selectbox("Select Student ID", student_ids)
@@ -440,43 +573,65 @@ elif page == "Score Responses":
         student_df = df[df["Student_ID"] == selected_student].copy()
 
         with s2:
-            task_ids = sorted(student_df["Task_ID"].dropna().unique(), key=task_sort_key)
+            task_ids = sorted(
+                student_df["Task_ID"].dropna().unique(),
+                key=task_sort_key
+            )
             selected_task = st.selectbox("Select Task", task_ids)
 
-        idx = df[(df["Student_ID"] == selected_student) & (df["Task_ID"] == selected_task)].index[0]
+        idx = df[
+            (df["Student_ID"] == selected_student) &
+            (df["Task_ID"] == selected_task)
+        ].index[0]
+
         row = df.loc[idx]
 
         st.subheader(f"Scoring: {selected_student} | {selected_task}")
+
         st.markdown("### Prompt")
         st.info(row["Prompt"])
 
         with st.expander("View Response Material"):
             st.markdown("**Audio Response**")
             audio_name = row["Voice_File_Name"]
+
             if audio_name in st.session_state.audio_files:
                 st.audio(st.session_state.audio_files[audio_name])
             else:
                 st.caption("Audio file is not available in this session.")
+
             st.markdown("**Written Pedagogical Response**")
             st.write(row["Written_Response"])
+
             st.markdown("**Diagnostic Reflection**")
             st.write(row["Reflection_1"])
+
             st.markdown("**Strategy Reflection**")
             st.write(row["Reflection_2"])
 
         st.markdown("### Rubric Scores")
+
         scores = {}
         left, right = st.columns(2)
 
         for i, col in enumerate(RUBRIC_COLUMNS):
-            value = row[col]
-            if pd.isna(value):
-                value = 3
-            else:
-                value = int(value)
+            current_value = row[col]
 
-            with left if i % 2 == 0 else right:
-                scores[col] = st.slider(RUBRIC_LABELS[col], 1, 5, value, key=f"{selected_student}_{selected_task}_{col}")
+            if pd.isna(current_value):
+                current_value = 3
+            else:
+                current_value = int(current_value)
+
+            target_column = left if i % 2 == 0 else right
+
+            with target_column:
+                scores[col] = st.slider(
+                    RUBRIC_LABELS[col],
+                    min_value=1,
+                    max_value=5,
+                    value=current_value,
+                    key=f"{selected_student}_{selected_task}_{col}"
+                )
 
         total_score = sum(scores.values())
         percentage = (total_score / MAX_SCORE_PER_TASK) * 100
@@ -485,26 +640,39 @@ elif page == "Score Responses":
         m1.metric("Total Score", f"{total_score}/{MAX_SCORE_PER_TASK}")
         m2.metric("Percentage", f"{percentage:.2f}%")
 
-        feedback_text = st.text_area("Teacher Educator Feedback", value=str(row.get("Feedback", "")), height=120)
+        feedback_text = st.text_area(
+            "Teacher Educator Feedback",
+            value=str(row.get("Feedback", "")),
+            height=120
+        )
 
         if st.button("Generate Suggested Feedback"):
-            temp = row.copy()
+            temp_row = row.copy()
+
             for col, score in scores.items():
-                temp[col] = score
-            st.info(generate_feedback(temp))
+                temp_row[col] = score
+
+            st.info(generate_feedback(temp_row))
 
         if st.button("Save Scores and Feedback", type="primary"):
             for col, score in scores.items():
                 df.loc[idx, col] = score
+
             df.loc[idx, "Feedback"] = feedback_text.strip()
             df = calculate_scores(df)
             st.session_state.data = df
+
             st.success("Scores and feedback saved successfully.")
 
         st.caption("Scoring guide: 1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent")
 
+# -------------------------------------------------------
+# Diagnostic Profile Page
+# -------------------------------------------------------
+
 elif page == "Diagnostic Profile":
     st.title("Diagnostic Profile")
+
     df = calculate_scores(st.session_state.data)
 
     if len(df) == 0:
@@ -514,7 +682,10 @@ elif page == "Diagnostic Profile":
         selected_student = st.selectbox("Select Student ID", student_ids)
 
         student_df = df[df["Student_ID"] == selected_student].copy()
-        student_df = student_df.sort_values("Task_ID", key=lambda x: x.map(task_sort_key))
+        student_df = student_df.sort_values(
+            "Task_ID",
+            key=lambda x: x.map(task_sort_key)
+        )
 
         st.subheader(f"Diagnostic Profile: {selected_student}")
 
@@ -554,11 +725,14 @@ elif page == "Diagnostic Profile":
             st.bar_chart(chart_df)
 
             progress_df = student_df[["Task_ID", "Total_Score"]].set_index("Task_ID")
+
             st.markdown("### Task-wise Progress")
             st.line_chart(progress_df)
 
             st.markdown("### Diagnostic Note")
+
             latest_scored = student_df.dropna(subset=RUBRIC_COLUMNS, how="all")
+
             if not latest_scored.empty:
                 st.info(generate_feedback(latest_scored.iloc[-1]))
             else:
@@ -569,14 +743,20 @@ elif page == "Diagnostic Profile":
         st.markdown("### Submitted Task Data")
         st.dataframe(student_df, use_container_width=True)
 
+# -------------------------------------------------------
+# Task Analytics Page
+# -------------------------------------------------------
+
 elif page == "Task Analytics":
     st.title("Task Analytics")
+
     df = calculate_scores(st.session_state.data)
 
     if len(df) == 0:
         st.warning("No responses available yet.")
     else:
         st.subheader("Dataset Summary")
+
         q1, q2, q3, q4 = st.columns(4)
         q1.metric("Participants", df["Student_ID"].nunique())
         q2.metric("Submissions", len(df))
@@ -584,39 +764,100 @@ elif page == "Task Analytics":
         q4.metric("Average Score", f"{df['Total_Score'].mean():.2f}")
 
         st.markdown("### Task-wise Mean Score")
-        task_summary = df.groupby(["Task_ID", "Task_Category"])["Total_Score"].agg(["mean", "std", "count"]).reset_index()
-        task_summary.rename(columns={"mean": "Mean Score", "std": "SD", "count": "Submissions"}, inplace=True)
+
+        task_summary = (
+            df.groupby(["Task_ID", "Task_Category"])["Total_Score"]
+            .agg(["mean", "std", "count"])
+            .reset_index()
+        )
+
+        task_summary.rename(
+            columns={
+                "mean": "Mean Score",
+                "std": "SD",
+                "count": "Submissions"
+            },
+            inplace=True
+        )
+
         task_summary["Task_Order"] = task_summary["Task_ID"].map(task_sort_key)
         task_summary = task_summary.sort_values("Task_Order")
-        st.dataframe(task_summary.drop(columns=["Task_Order"]), use_container_width=True)
+
+        st.dataframe(
+            task_summary.drop(columns=["Task_Order"]),
+            use_container_width=True
+        )
 
         st.bar_chart(task_summary.set_index("Task_ID")[["Mean Score"]])
 
         st.markdown("### Dimension-wise Mean Scores")
+
         rubric_mean = df[RUBRIC_COLUMNS].mean(numeric_only=True)
+
         dimension_df = pd.DataFrame({
             "Dimension": [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS],
             "Average Score": [rubric_mean[col] for col in RUBRIC_COLUMNS]
         }).set_index("Dimension")
+
         st.bar_chart(dimension_df)
 
         st.markdown("### Subject-wise Summary")
-        subject_summary = df.groupby("Pedagogy_Subject")["Total_Score"].agg(["mean", "std", "count"]).reset_index()
-        subject_summary.rename(columns={"mean": "Mean Score", "std": "SD", "count": "Submissions"}, inplace=True)
+
+        subject_summary = (
+            df.groupby("Pedagogy_Subject")["Total_Score"]
+            .agg(["mean", "std", "count"])
+            .reset_index()
+        )
+
+        subject_summary.rename(
+            columns={
+                "mean": "Mean Score",
+                "std": "SD",
+                "count": "Submissions"
+            },
+            inplace=True
+        )
+
         st.dataframe(subject_summary, use_container_width=True)
 
         st.markdown("### Category-wise Summary")
-        category_summary = df.groupby("Task_Category")["Total_Score"].agg(["mean", "std", "count"]).reset_index()
-        category_summary.rename(columns={"mean": "Mean Score", "std": "SD", "count": "Submissions"}, inplace=True)
+
+        category_summary = (
+            df.groupby("Task_Category")["Total_Score"]
+            .agg(["mean", "std", "count"])
+            .reset_index()
+        )
+
+        category_summary.rename(
+            columns={
+                "mean": "Mean Score",
+                "std": "SD",
+                "count": "Submissions"
+            },
+            inplace=True
+        )
+
         st.dataframe(category_summary, use_container_width=True)
 
         st.markdown("### Completion Status")
-        completion = df.groupby(["Student_ID", "Name", "Semester", "Pedagogy_Subject"])["Task_ID"].count().reset_index()
+
+        completion = (
+            df.groupby(["Student_ID", "Name", "Semester", "Pedagogy_Subject"])["Task_ID"]
+            .count()
+            .reset_index()
+        )
+
         completion.rename(columns={"Task_ID": "Tasks_Submitted"}, inplace=True)
+
         st.dataframe(completion, use_container_width=True)
+
+# -------------------------------------------------------
+# Download Data Page
+# -------------------------------------------------------
 
 elif page == "Download Data":
     st.title("Download Data")
+
     df = calculate_scores(st.session_state.data)
 
     if len(df) == 0:
@@ -628,10 +869,22 @@ elif page == "Download Data":
         excel_data = to_excel(df)
 
         d1, d2 = st.columns(2)
+
         with d1:
-            st.download_button("Download CSV", data=csv_data, file_name="VoiceBridge_PST_Data.csv", mime="text/csv")
+            st.download_button(
+                "Download CSV",
+                data=csv_data,
+                file_name="VoiceBridge_PST_Data.csv",
+                mime="text/csv"
+            )
+
         with d2:
-            st.download_button("Download Excel", data=excel_data, file_name="VoiceBridge_PST_Data.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            st.download_button(
+                "Download Excel",
+                data=excel_data,
+                file_name="VoiceBridge_PST_Data.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
 
         st.markdown("### Data Preview")
         st.dataframe(df, use_container_width=True)
