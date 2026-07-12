@@ -45,7 +45,7 @@ RUBRIC_LABELS = {
     "Pedagogical_Reasoning": "Pedagogical Reasoning",
     "Learner_Centred_Explanation": "Learner-Centred Explanation",
     "Misconception_Diagnosis": "Misconception Diagnosis",
-    "Use_of_Example_Strategy": "Use of Example / Strategy",
+    "Use_of_Example_Strategy": "Use of Example / Teaching Strategy",
     "Reflective_Thinking": "Reflective Thinking",
     "Voice_Written_Alignment": "Voice–Written Alignment"
 }
@@ -128,8 +128,10 @@ def calculate_scores(df):
 
 def convert_df_to_excel(df):
     output = BytesIO()
+
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="VoiceBridge_PST_Data")
+
     return output.getvalue()
 
 
@@ -200,12 +202,12 @@ if "data" not in st.session_state:
 # -------------------------------------------------------
 
 st.sidebar.title("🎙️ VoiceBridge-PST")
-st.sidebar.caption("Researcher Workspace")
+st.sidebar.caption("Assessment Analytics Workspace")
 
 page = st.sidebar.radio(
     "Workspace Menu",
     [
-        "Overview",
+        "Home",
         "Upload Data",
         "Review Responses",
         "Score Responses",
@@ -226,43 +228,73 @@ else:
 
 
 # -------------------------------------------------------
-# Page 1: Overview
+# Page 1: Home
 # -------------------------------------------------------
 
-if page == "Overview":
+if page == "Home":
     st.title("VoiceBridge-PST Analytics Dashboard")
-    st.subheader("Researcher Workspace for Pedagogical Reasoning Assessment")
+    st.subheader("Voice-First Micro-Pedagogical Reasoning Assessment for Pre-Service Teachers")
 
-    st.markdown(
-        """
-        This dashboard supports response review, rubric-based scoring, individual diagnostic profiling, 
-        group-level analytics, and export of scored data.
+    st.markdown("---")
 
-        The dashboard is intended for researcher or teacher-educator use only.
-        """
-    )
-
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2 = st.columns([1, 3])
 
     with col1:
-        st.metric("Step 1", "Upload")
-        st.caption("Upload response data")
+        st.markdown("### 🎙️")
+        st.markdown("## VoiceBridge-PST")
 
     with col2:
-        st.metric("Step 2", "Review")
-        st.caption("Check audio and written responses")
+        st.markdown("## Conceptualized and Developed by")
+        st.markdown("**Dr. Meenakshi Dwivedi**")
+        st.markdown("Assistant Professor")
+        st.markdown("Department of Education / School of Education")
+        st.markdown("Mahatma Jyotiba Phule Rohilkhand University, Bareilly, Uttar Pradesh, India")
 
-    with col3:
-        st.metric("Step 3", "Score")
-        st.caption("Apply rubric scores")
+    st.markdown("---")
 
-    with col4:
-        st.metric("Step 4", "Analyse")
-        st.caption("View profiles and group trends")
+    st.markdown("## Purpose of the Dashboard")
 
-    st.divider()
+    st.markdown("""
+    The **VoiceBridge-PST Analytics Dashboard** is a web-based researcher workspace designed to support 
+    the review, scoring, and analysis of pre-service teachers’ micro-pedagogical reasoning responses.
 
-    st.markdown("### Required Data Format")
+    The dashboard may be used for:
+    """)
+
+    st.markdown("""
+    - rubric-based assessment,
+    - response review,
+    - individual diagnostic profiling,
+    - group-level analysis,
+    - research-based intervention studies,
+    - teacher-education assessment.
+    """)
+
+    st.markdown("---")
+
+    st.markdown("## Dashboard Workflow")
+
+    st.markdown("""
+    **Upload Data → Review Responses → Score Responses → Individual Profile → Group Analytics → Export Data**
+    """)
+
+    st.markdown("---")
+
+    st.markdown("## Assessment Dimensions")
+
+    st.markdown("""
+    1. Conceptual Clarity  
+    2. Pedagogical Reasoning  
+    3. Learner-Centred Explanation  
+    4. Misconception Diagnosis  
+    5. Use of Example / Teaching Strategy  
+    6. Reflective Thinking  
+    7. Voice–Written Alignment  
+    """)
+
+    st.markdown("---")
+
+    st.markdown("## Required Data Format")
     show_required_columns()
 
     sample_df = create_sample_template()
@@ -283,12 +315,10 @@ if page == "Overview":
 elif page == "Upload Data":
     st.title("Upload Data")
 
-    st.markdown(
-        """
-        Upload the response dataset in Excel or CSV format.  
-        The uploaded file should contain the required columns listed below.
-        """
-    )
+    st.markdown("""
+    Upload the response dataset in Excel or CSV format.  
+    The uploaded file should contain the required columns listed below.
+    """)
 
     with st.expander("View required columns"):
         show_required_columns()
@@ -334,10 +364,12 @@ elif page == "Upload Data":
     st.divider()
 
     st.markdown("### Use Sample Data")
+
     if st.button("Load Sample Data"):
         df = create_sample_template()
         df = calculate_scores(df)
         st.session_state.data = df
+
         st.success("Sample data loaded successfully.")
         st.dataframe(df, use_container_width=True)
 
@@ -376,6 +408,7 @@ elif page == "Review Responses":
         st.subheader(f"{selected_student} | {selected_task}")
 
         info_col1, info_col2, info_col3 = st.columns(3)
+
         info_col1.metric("Group", row["Group"])
         info_col2.metric("Prompt Type", row["Prompt_Type"])
         info_col3.metric("Current Score", f"{row['Total_Score']:.0f}/{MAX_SCORE_PER_TASK}")
@@ -384,6 +417,7 @@ elif page == "Review Responses":
         st.info(row["Prompt"])
 
         st.markdown("### Audio Response")
+
         if pd.notna(row["Voice_File_Link"]) and str(row["Voice_File_Link"]).strip() != "":
             st.markdown(f"[Open Audio Response]({row['Voice_File_Link']})")
         else:
@@ -393,6 +427,7 @@ elif page == "Review Responses":
         st.write(row["Written_Response"])
 
         st.markdown("### Reflections")
+
         ref_col1, ref_col2 = st.columns(2)
 
         with ref_col1:
@@ -410,10 +445,12 @@ elif page == "Review Responses":
                 st.caption("Not available.")
 
         st.markdown("### Existing Scores")
+
         score_display = {
             RUBRIC_LABELS[col]: row[col] if pd.notna(row[col]) else "Not scored"
             for col in RUBRIC_COLUMNS
         }
+
         st.table(pd.DataFrame(score_display.items(), columns=["Dimension", "Score"]))
 
 
@@ -460,6 +497,7 @@ elif page == "Score Responses":
 
         with st.expander("View Response Material"):
             st.markdown("**Audio Response**")
+
             if pd.notna(row["Voice_File_Link"]) and str(row["Voice_File_Link"]).strip() != "":
                 st.markdown(f"[Open Audio Response]({row['Voice_File_Link']})")
             else:
@@ -515,9 +553,7 @@ elif page == "Score Responses":
             st.success("Scores saved successfully.")
 
         st.markdown("### Scoring Guide")
-        st.caption(
-            "1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent"
-        )
+        st.caption("1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent")
 
 
 # -------------------------------------------------------
@@ -547,6 +583,7 @@ elif page == "Individual Profile":
         overall_percentage = (total_score / max_possible) * 100 if max_possible else 0
 
         col1, col2, col3, col4 = st.columns(4)
+
         col1.metric("Group", student_df["Group"].iloc[0])
         col2.metric("Total Score", f"{total_score:.0f}/{max_possible}")
         col3.metric("Overall %", f"{overall_percentage:.2f}%")
@@ -562,7 +599,9 @@ elif page == "Individual Profile":
             st.markdown(f"**Needs Improvement:** {RUBRIC_LABELS[weakest]}")
 
             st.markdown("### Dimension-wise Profile")
+
             fig, ax = plt.subplots(figsize=(10, 5))
+
             labels = [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS]
             values = [rubric_means[col] for col in RUBRIC_COLUMNS]
 
@@ -570,18 +609,23 @@ elif page == "Individual Profile":
             ax.set_ylabel("Average Score")
             ax.set_ylim(0, 5)
             ax.tick_params(axis="x", rotation=75)
+
             st.pyplot(fig)
 
             st.markdown("### Task-wise Progress")
+
             fig2, ax2 = plt.subplots(figsize=(8, 4))
+
             ax2.plot(student_df["Task_No"], student_df["Total_Score"], marker="o")
             ax2.set_xlabel("Task")
             ax2.set_ylabel("Total Score")
             ax2.set_ylim(0, MAX_SCORE_PER_TASK)
             ax2.tick_params(axis="x", rotation=45)
+
             st.pyplot(fig2)
 
             st.markdown("### Diagnostic Note")
+
             latest_scored = student_df.dropna(subset=RUBRIC_COLUMNS, how="all")
 
             if not latest_scored.empty:
@@ -612,6 +656,7 @@ elif page == "Group Analytics":
         st.subheader("Dataset Summary")
 
         col1, col2, col3, col4 = st.columns(4)
+
         col1.metric("Participants", df["Student_ID"].nunique())
         col2.metric("Responses", len(df))
         col3.metric("Groups", df["Group"].nunique())
@@ -639,9 +684,11 @@ elif page == "Group Analytics":
         st.dataframe(group_summary, use_container_width=True)
 
         fig, ax = plt.subplots(figsize=(7, 4))
+
         ax.bar(group_summary["Group"], group_summary["Mean Score"])
         ax.set_ylabel("Mean Total Score")
         ax.set_ylim(0, MAX_SCORE_PER_TASK)
+
         st.pyplot(fig)
 
         st.markdown("### Task-wise Progress by Group")
@@ -659,6 +706,7 @@ elif page == "Group Analytics":
 
         for group in task_group_summary["Group"].unique():
             group_data = task_group_summary[task_group_summary["Group"] == group]
+
             ax2.plot(
                 group_data["Task_No"],
                 group_data["Total_Score"],
@@ -671,6 +719,7 @@ elif page == "Group Analytics":
         ax2.set_ylim(0, MAX_SCORE_PER_TASK)
         ax2.legend()
         ax2.tick_params(axis="x", rotation=45)
+
         st.pyplot(fig2)
 
         st.markdown("### Dimension-wise Group Profile")
@@ -689,14 +738,17 @@ elif page == "Group Analytics":
         )
 
         group_row = rubric_mean[rubric_mean["Group"] == selected_group].iloc[0]
+
         labels = [RUBRIC_LABELS[col] for col in RUBRIC_COLUMNS]
         values = [group_row[col] for col in RUBRIC_COLUMNS]
 
         fig3, ax3 = plt.subplots(figsize=(10, 5))
+
         ax3.bar(labels, values)
         ax3.set_ylabel("Average Score")
         ax3.set_ylim(0, 5)
         ax3.tick_params(axis="x", rotation=75)
+
         st.pyplot(fig3)
 
         st.markdown("### Completion Status")
@@ -708,6 +760,7 @@ elif page == "Group Analytics":
         )
 
         completion.rename(columns={"Task_No": "Tasks_Submitted"}, inplace=True)
+
         st.dataframe(completion, use_container_width=True)
 
 
