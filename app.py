@@ -16,23 +16,8 @@ st.set_page_config(
 )
 
 # -------------------------------------------------------
-# Constants
+# Rubric Dimensions
 # -------------------------------------------------------
-
-REQUIRED_COLUMNS = [
-    "Student_ID",
-    "Name",
-    "Semester",
-    "Pedagogy_Subject",
-    "Task_No",
-    "Prompt_Type",
-    "Prompt",
-    "Voice_File_Name",
-    "Written_Response",
-    "Reflection_1",
-    "Reflection_2",
-    "Submission_Time"
-]
 
 RUBRIC_COLUMNS = [
     "Conceptual_Clarity",
@@ -56,43 +41,416 @@ RUBRIC_LABELS = {
 
 MAX_SCORE_PER_TASK = len(RUBRIC_COLUMNS) * 5
 
+# -------------------------------------------------------
+# Required Columns
+# -------------------------------------------------------
+
+REQUIRED_COLUMNS = [
+    "Student_ID",
+    "Name",
+    "Semester",
+    "Pedagogy_Subject",
+    "Task_ID",
+    "Task_Category",
+    "Prompt",
+    "Voice_File_Name",
+    "Written_Response",
+    "Reflection_1",
+    "Reflection_2",
+    "Submission_Time"
+]
+
+# -------------------------------------------------------
+# Subject-wise Prompt Bank: 10 Tasks per Subject
+# -------------------------------------------------------
+
 TASK_BANK = {
-    "Task 1": {
-        "Prompt_Type": "Misconception Diagnosis",
-        "Prompt": "A Class VI student says: “A larger denominator means a larger fraction.” How will you respond as a teacher?"
-    },
-    "Task 2": {
-        "Prompt_Type": "Classroom Response",
-        "Prompt": "Some students are not participating in group work. What will you do as a teacher?"
-    },
-    "Task 3": {
-        "Prompt_Type": "Inclusive Adaptation",
-        "Prompt": "How would you adapt a classroom activity for a learner who needs additional learning support?"
-    },
-    "Task 4": {
-        "Prompt_Type": "Assessment Decision",
-        "Prompt": "After teaching a concept, how would you check whether students have understood it?"
-    },
-    "Task 5": {
-        "Prompt_Type": "Pedagogical Explanation",
-        "Prompt": "Explain how you would introduce a new concept using an example from students’ daily life."
-    }
+    "Pedagogy of Mathematics": [
+        {
+            "Task_ID": "MATH-01",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A Class VI student says: “A larger denominator means a larger fraction.” How will you respond as a teacher?"
+        },
+        {
+            "Task_ID": "MATH-02",
+            "Task_Category": "Error Analysis",
+            "Prompt": "A student solves 3x + 5 = 20 as 3x = 25. How will you identify and address this error?"
+        },
+        {
+            "Task_ID": "MATH-03",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you introduce the concept of perimeter using examples from students’ daily life?"
+        },
+        {
+            "Task_ID": "MATH-04",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you explain the difference between area and perimeter to Class VII students?"
+        },
+        {
+            "Task_ID": "MATH-05",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "After teaching equivalent fractions, how would you check whether students have understood the concept?"
+        },
+        {
+            "Task_ID": "MATH-06",
+            "Task_Category": "Inclusive Adaptation",
+            "Prompt": "How would you adapt a geometry activity for a learner who has difficulty drawing diagrams?"
+        },
+        {
+            "Task_ID": "MATH-07",
+            "Task_Category": "Short Activity Design",
+            "Prompt": "Suggest a short classroom activity to teach place value to middle-school students."
+        },
+        {
+            "Task_ID": "MATH-08",
+            "Task_Category": "Classroom Engagement",
+            "Prompt": "Students are afraid of solving algebra questions on the board. What will you do?"
+        },
+        {
+            "Task_ID": "MATH-09",
+            "Task_Category": "Use of Example / Analogy",
+            "Prompt": "How would you explain ratio using examples from daily life?"
+        },
+        {
+            "Task_ID": "MATH-10",
+            "Task_Category": "Error Analysis",
+            "Prompt": "A student thinks 0.5 is smaller than 0.25 because 5 is smaller than 25. How will you respond?"
+        }
+    ],
+
+    "Pedagogy of Science": [
+        {
+            "Task_ID": "SCI-01",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A Class VII student says: “Heat and temperature are the same.” How will you respond as a teacher?"
+        },
+        {
+            "Task_ID": "SCI-02",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you introduce the concept of evaporation using daily-life examples?"
+        },
+        {
+            "Task_ID": "SCI-03",
+            "Task_Category": "Short Activity Design",
+            "Prompt": "Suggest a short classroom activity to show that air occupies space."
+        },
+        {
+            "Task_ID": "SCI-04",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "After teaching separation of substances, how would you check students’ understanding?"
+        },
+        {
+            "Task_ID": "SCI-05",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A student says: “Plants take their food directly from the soil.” How will you respond?"
+        },
+        {
+            "Task_ID": "SCI-06",
+            "Task_Category": "Inclusive Adaptation",
+            "Prompt": "How would you adapt a science activity for a learner who is not confident in handling apparatus?"
+        },
+        {
+            "Task_ID": "SCI-07",
+            "Task_Category": "Classroom Engagement",
+            "Prompt": "Students memorize scientific definitions but cannot relate them to experiments. What will you do?"
+        },
+        {
+            "Task_ID": "SCI-08",
+            "Task_Category": "Use of Example / Analogy",
+            "Prompt": "How would you explain force using playground examples?"
+        },
+        {
+            "Task_ID": "SCI-09",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you explain the difference between renewable and non-renewable resources?"
+        },
+        {
+            "Task_ID": "SCI-10",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A student says: “Heavier objects fall faster than lighter objects.” How will you respond?"
+        }
+    ],
+
+    "Pedagogy of Social Science": [
+        {
+            "Task_ID": "SOC-01",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A Class VIII student says: “Democracy only means voting.” How will you respond as a teacher?"
+        },
+        {
+            "Task_ID": "SOC-02",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you introduce the concept of resources using local examples?"
+        },
+        {
+            "Task_ID": "SOC-03",
+            "Task_Category": "Classroom Engagement",
+            "Prompt": "Students find history dates boring and disconnected from life. What will you do?"
+        },
+        {
+            "Task_ID": "SOC-04",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "After teaching fundamental rights, how would you check students’ understanding?"
+        },
+        {
+            "Task_ID": "SOC-05",
+            "Task_Category": "Inclusive Adaptation",
+            "Prompt": "How would you adapt a map-reading activity for a learner who needs additional support?"
+        },
+        {
+            "Task_ID": "SOC-06",
+            "Task_Category": "Use of Example / Analogy",
+            "Prompt": "How would you explain the concept of market using examples from a local shop or weekly market?"
+        },
+        {
+            "Task_ID": "SOC-07",
+            "Task_Category": "Error Analysis",
+            "Prompt": "A student confuses weather with climate. How would you address this misunderstanding?"
+        },
+        {
+            "Task_ID": "SOC-08",
+            "Task_Category": "Short Activity Design",
+            "Prompt": "Suggest a short activity to teach the idea of diversity in India."
+        },
+        {
+            "Task_ID": "SOC-09",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you explain the difference between equality and equity to students?"
+        },
+        {
+            "Task_ID": "SOC-10",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "How would you assess whether students can connect a social science concept with current society?"
+        }
+    ],
+
+    "Pedagogy of English": [
+        {
+            "Task_ID": "ENG-01",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A student can read a passage aloud but cannot infer meaning. How will you support the learner?"
+        },
+        {
+            "Task_ID": "ENG-02",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you introduce descriptive writing using classroom objects?"
+        },
+        {
+            "Task_ID": "ENG-03",
+            "Task_Category": "Classroom Engagement",
+            "Prompt": "Students hesitate to speak in English during class. What will you do?"
+        },
+        {
+            "Task_ID": "ENG-04",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "After teaching a poem, how would you check comprehension beyond memorization?"
+        },
+        {
+            "Task_ID": "ENG-05",
+            "Task_Category": "Inclusive Adaptation",
+            "Prompt": "How would you support a learner who understands ideas but struggles to write in English?"
+        },
+        {
+            "Task_ID": "ENG-06",
+            "Task_Category": "Use of Example / Analogy",
+            "Prompt": "How would you explain the difference between literal and implied meaning using simple examples?"
+        },
+        {
+            "Task_ID": "ENG-07",
+            "Task_Category": "Error Analysis",
+            "Prompt": "A student writes grammatically correct sentences but cannot organize a paragraph. How will you respond?"
+        },
+        {
+            "Task_ID": "ENG-08",
+            "Task_Category": "Short Activity Design",
+            "Prompt": "Suggest a short activity to improve students’ vocabulary through context."
+        },
+        {
+            "Task_ID": "ENG-09",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you teach the idea of character analysis in a short story?"
+        },
+        {
+            "Task_ID": "ENG-10",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "How would you assess students’ speaking ability without making them anxious?"
+        }
+    ],
+
+    "Pedagogy of Hindi": [
+        {
+            "Task_ID": "HIN-01",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A student memorizes a कविता but cannot explain its भावार्थ. How will you respond?"
+        },
+        {
+            "Task_ID": "HIN-02",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you introduce मुहावरे using daily-life situations?"
+        },
+        {
+            "Task_ID": "HIN-03",
+            "Task_Category": "Classroom Engagement",
+            "Prompt": "Students are not interested in पाठ-वाचन. What will you do?"
+        },
+        {
+            "Task_ID": "HIN-04",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "After teaching a कहानी, how would you check whether students understood the central idea?"
+        },
+        {
+            "Task_ID": "HIN-05",
+            "Task_Category": "Inclusive Adaptation",
+            "Prompt": "How would you support a learner who has difficulty expressing ideas in written Hindi?"
+        },
+        {
+            "Task_ID": "HIN-06",
+            "Task_Category": "Use of Example / Analogy",
+            "Prompt": "How would you explain अलंकार using examples from familiar poems or songs?"
+        },
+        {
+            "Task_ID": "HIN-07",
+            "Task_Category": "Error Analysis",
+            "Prompt": "A student writes answers by memorizing lines but does not explain in their own words. How will you address this?"
+        },
+        {
+            "Task_ID": "HIN-08",
+            "Task_Category": "Short Activity Design",
+            "Prompt": "Suggest a short activity to teach पर्यायवाची शब्द effectively."
+        },
+        {
+            "Task_ID": "HIN-09",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you teach पत्र लेखन in a meaningful classroom way?"
+        },
+        {
+            "Task_ID": "HIN-10",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "How would you assess students’ understanding of a poem beyond recitation?"
+        }
+    ],
+
+    "Pedagogy of Commerce": [
+        {
+            "Task_ID": "COM-01",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you explain the difference between profit and revenue using a simple classroom example?"
+        },
+        {
+            "Task_ID": "COM-02",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A student says: “Sales and profit are the same.” How will you respond?"
+        },
+        {
+            "Task_ID": "COM-03",
+            "Task_Category": "Use of Example / Analogy",
+            "Prompt": "How would you explain assets and liabilities using examples from daily life?"
+        },
+        {
+            "Task_ID": "COM-04",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "After teaching journal entries, how would you check whether students can apply debit and credit rules?"
+        },
+        {
+            "Task_ID": "COM-05",
+            "Task_Category": "Error Analysis",
+            "Prompt": "A student records a cash purchase on the wrong side of an account. How will you diagnose and address the error?"
+        },
+        {
+            "Task_ID": "COM-06",
+            "Task_Category": "Classroom Engagement",
+            "Prompt": "Students find accounting rules mechanical and boring. What teaching strategy will you use?"
+        },
+        {
+            "Task_ID": "COM-07",
+            "Task_Category": "Short Activity Design",
+            "Prompt": "Suggest a short classroom activity to teach demand and supply."
+        },
+        {
+            "Task_ID": "COM-08",
+            "Task_Category": "Inclusive Adaptation",
+            "Prompt": "How would you support a learner who struggles with numerical examples in commerce?"
+        },
+        {
+            "Task_ID": "COM-09",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you introduce the concept of banking services using local examples?"
+        },
+        {
+            "Task_ID": "COM-10",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "How would you assess whether students can connect business concepts with real market situations?"
+        }
+    ],
+
+    "Pedagogy of Computer Science": [
+        {
+            "Task_ID": "CS-01",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you explain the difference between hardware and software using classroom examples?"
+        },
+        {
+            "Task_ID": "CS-02",
+            "Task_Category": "Misconception Diagnosis",
+            "Prompt": "A student says: “The internet and the web are the same.” How will you respond?"
+        },
+        {
+            "Task_ID": "CS-03",
+            "Task_Category": "Use of Example / Analogy",
+            "Prompt": "How would you explain the concept of an algorithm using a daily-life example?"
+        },
+        {
+            "Task_ID": "CS-04",
+            "Task_Category": "Error Analysis",
+            "Prompt": "A student writes code without understanding the logic behind it. How will you address this?"
+        },
+        {
+            "Task_ID": "CS-05",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "After teaching loops, how would you check whether students understand repetition in programming?"
+        },
+        {
+            "Task_ID": "CS-06",
+            "Task_Category": "Short Activity Design",
+            "Prompt": "Suggest a short unplugged activity to teach binary numbers."
+        },
+        {
+            "Task_ID": "CS-07",
+            "Task_Category": "Classroom Engagement",
+            "Prompt": "Some students are afraid of coding and avoid participation. What will you do?"
+        },
+        {
+            "Task_ID": "CS-08",
+            "Task_Category": "Inclusive Adaptation",
+            "Prompt": "How would you support a learner who has limited access to a computer outside class?"
+        },
+        {
+            "Task_ID": "CS-09",
+            "Task_Category": "Concept Explanation",
+            "Prompt": "How would you explain data privacy to school students using simple examples?"
+        },
+        {
+            "Task_ID": "CS-10",
+            "Task_Category": "Assessment Decision",
+            "Prompt": "How would you assess whether students can apply computational thinking to a non-computer problem?"
+        }
+    ]
 }
 
+PEDAGOGY_SUBJECTS = list(TASK_BANK.keys())
 
 # -------------------------------------------------------
 # Helper Functions
 # -------------------------------------------------------
 
 def initialize_session():
-    if "responses" not in st.session_state:
-        st.session_state.responses = pd.DataFrame(columns=REQUIRED_COLUMNS + RUBRIC_COLUMNS + ["Total_Score", "Percentage", "Feedback"])
+    if "data" not in st.session_state:
+        st.session_state.data = pd.DataFrame(
+            columns=REQUIRED_COLUMNS + RUBRIC_COLUMNS + ["Total_Score", "Percentage", "Feedback"]
+        )
 
     if "audio_files" not in st.session_state:
         st.session_state.audio_files = {}
-
-    if "data" not in st.session_state:
-        st.session_state.data = st.session_state.responses.copy()
 
 
 def calculate_scores(df):
@@ -110,16 +468,11 @@ def calculate_scores(df):
 
 def convert_df_to_excel(df):
     output = BytesIO()
+
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="VoiceBridge_PST_Data")
+
     return output.getvalue()
-
-
-def clean_task_order(task_value):
-    try:
-        return int(str(task_value).replace("Task", "").strip())
-    except:
-        return str(task_value)
 
 
 def generate_feedback(row):
@@ -152,6 +505,38 @@ def generate_feedback(row):
     )
 
 
+def create_sample_data():
+    rows = []
+
+    sample_subjects = ["Pedagogy of Mathematics", "Pedagogy of Science", "Pedagogy of English"]
+
+    for i, subject in enumerate(sample_subjects, start=1):
+        task = TASK_BANK[subject][0]
+
+        row = {
+            "Student_ID": f"PST0{i}",
+            "Name": f"Participant {i}",
+            "Semester": "B.Ed. Semester II",
+            "Pedagogy_Subject": subject,
+            "Task_ID": task["Task_ID"],
+            "Task_Category": task["Task_Category"],
+            "Prompt": task["Prompt"],
+            "Voice_File_Name": f"sample_audio_{i}.mp3",
+            "Written_Response": "This is a sample written pedagogical response for testing the dashboard.",
+            "Reflection_1": "This is a sample diagnostic reflection.",
+            "Reflection_2": "This is a sample teaching strategy reflection.",
+            "Submission_Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "Feedback": ""
+        }
+
+        for col in RUBRIC_COLUMNS:
+            row[col] = np.nan
+
+        rows.append(row)
+
+    return calculate_scores(pd.DataFrame(rows))
+
+
 def show_required_columns():
     st.code(
         """
@@ -159,8 +544,8 @@ Student_ID
 Name
 Semester
 Pedagogy_Subject
-Task_No
-Prompt_Type
+Task_ID
+Task_Category
 Prompt
 Voice_File_Name
 Written_Response
@@ -172,50 +557,11 @@ Submission_Time
     )
 
 
-def create_sample_data():
-    data = {
-        "Student_ID": ["PST01", "PST01", "PST02"],
-        "Name": ["Participant 1", "Participant 1", "Participant 2"],
-        "Semester": ["B.Ed. Semester II", "B.Ed. Semester II", "B.Ed. Semester II"],
-        "Pedagogy_Subject": ["Pedagogy of Mathematics", "Pedagogy of Mathematics", "Pedagogy of Science"],
-        "Task_No": ["Task 1", "Task 2", "Task 1"],
-        "Prompt_Type": ["Misconception Diagnosis", "Classroom Response", "Misconception Diagnosis"],
-        "Prompt": [
-            TASK_BANK["Task 1"]["Prompt"],
-            TASK_BANK["Task 2"]["Prompt"],
-            TASK_BANK["Task 1"]["Prompt"]
-        ],
-        "Voice_File_Name": ["sample_audio_1.mp3", "sample_audio_2.mp3", "sample_audio_3.mp3"],
-        "Written_Response": [
-            "I will first identify the misconception and use fraction strips to explain the idea.",
-            "I will assign group roles and encourage participation through peer support.",
-            "I will use concrete examples and ask the learner to compare fractions visually."
-        ],
-        "Reflection_1": [
-            "The learner is confused between denominator size and fraction value.",
-            "The issue may be lack of role clarity or confidence.",
-            "The learner is comparing numbers without understanding part-whole relation."
-        ],
-        "Reflection_2": [
-            "I will use paper folding or fraction circles.",
-            "I will use group roles and guided participation.",
-            "I will use diagrams and examples."
-        ],
-        "Submission_Time": [
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ]
-    }
-
-    df = pd.DataFrame(data)
-
-    for col in RUBRIC_COLUMNS:
-        df[col] = np.nan
-
-    df["Feedback"] = ""
-
-    return calculate_scores(df)
+def sort_task_ids(task_id):
+    try:
+        return int(str(task_id).split("-")[-1])
+    except:
+        return str(task_id)
 
 
 initialize_session()
@@ -251,7 +597,6 @@ if len(current_df) > 0:
 else:
     st.sidebar.info("No submissions yet.")
 
-
 # -------------------------------------------------------
 # Page 1: Home
 # -------------------------------------------------------
@@ -283,7 +628,7 @@ if page == "Home":
     The **VoiceBridge-PST Dashboard** is a web-based activity and analytics platform designed for 
     voice-first micro-pedagogical reasoning assessment among pre-service teachers.
 
-    It enables pre-service teachers to respond to short pedagogical prompts through:
+    It enables pre-service teachers to respond to subject-specific pedagogical prompts through:
 
     - voice reasoning,
     - short written pedagogical response,
@@ -309,6 +654,13 @@ if page == "Home":
 
     st.markdown("---")
 
+    st.markdown("## Pedagogy Subjects Included")
+
+    for subject in PEDAGOGY_SUBJECTS:
+        st.markdown(f"- {subject}")
+
+    st.markdown("---")
+
     st.markdown("## Assessment Dimensions")
 
     st.markdown("""
@@ -322,10 +674,9 @@ if page == "Home":
     """)
 
     st.info(
-        "For broad use, this app should later be connected with Google Sheets, Firebase, Supabase, or another database. "
-        "The present version is suitable for testing and demonstration."
+        "The current version is suitable for testing and demonstration. "
+        "For broad institutional use, connect the app with Google Sheets, Firebase, Supabase, or another database."
     )
-
 
 # -------------------------------------------------------
 # Page 2: Activity Submission
@@ -335,14 +686,50 @@ elif page == "Activity Submission":
     st.title("Pre-service Teacher Activity Submission")
 
     st.markdown("""
-    Complete the activity by reading the prompt, uploading your audio response, writing a short pedagogical response, 
-    and submitting your reflections.
+    Select your pedagogy subject and task. Then upload your voice response, write a short pedagogical response, 
+    and submit your reflections.
     """)
 
     st.divider()
 
+    st.markdown("## Select Subject and Task")
+
+    subject_col, category_col = st.columns(2)
+
+    with subject_col:
+        selected_subject = st.selectbox("Pedagogy Subject", PEDAGOGY_SUBJECTS)
+
+    available_categories = sorted(
+        list(set(task["Task_Category"] for task in TASK_BANK[selected_subject]))
+    )
+
+    with category_col:
+        selected_category = st.selectbox("Task Category", available_categories)
+
+    filtered_tasks = [
+        task for task in TASK_BANK[selected_subject]
+        if task["Task_Category"] == selected_category
+    ]
+
+    task_options = {
+        f'{task["Task_ID"]} — {task["Prompt"][:75]}...': task
+        for task in filtered_tasks
+    }
+
+    selected_task_label = st.selectbox("Select Prompt", list(task_options.keys()))
+    selected_task = task_options[selected_task_label]
+
+    task_id = selected_task["Task_ID"]
+    task_category = selected_task["Task_Category"]
+    prompt = selected_task["Prompt"]
+
+    st.markdown("### Pedagogical Prompt")
+    st.info(prompt)
+
+    st.divider()
+
     with st.form("activity_submission_form", clear_on_submit=True):
-        st.markdown("### Participant Details")
+        st.markdown("## Participant Details")
 
         col1, col2 = st.columns(2)
 
@@ -353,54 +740,38 @@ elif page == "Activity Submission":
         with col2:
             semester = st.selectbox(
                 "Semester",
-                ["B.Ed. Semester I", "B.Ed. Semester II", "B.Ed. Semester III", "B.Ed. Semester IV", "Other"]
-            )
-
-            pedagogy_subject = st.selectbox(
-                "Pedagogy Subject",
                 [
-                    "Pedagogy of Mathematics",
-                    "Pedagogy of Science",
-                    "Pedagogy of Social Science",
-                    "Pedagogy of English",
-                    "Pedagogy of Hindi",
-                    "Pedagogy of Commerce",
-                    "Pedagogy of Computer Science",
-                    "Other"
+                    "B.Ed. Semester I",
+                    "B.Ed. Semester II",
+                    "B.Ed. Semester III",
+                    "B.Ed. Semester IV"
                 ]
             )
 
-        st.markdown("### Select Task")
+            st.text_input("Selected Pedagogy Subject", value=selected_subject, disabled=True)
 
-        task_no = st.selectbox("Task Number", list(TASK_BANK.keys()))
-        prompt_type = TASK_BANK[task_no]["Prompt_Type"]
-        prompt = TASK_BANK[task_no]["Prompt"]
-
-        st.markdown("### Pedagogical Prompt")
-        st.info(prompt)
-
-        st.markdown("### Voice Reasoning")
-        st.caption("Record your oral explanation on your phone/laptop and upload the audio file here. Suggested duration: 2–3 minutes.")
+        st.markdown("## Voice Reasoning")
+        st.caption("Record your oral explanation on your phone/laptop and upload the audio file. Suggested duration: 2–3 minutes.")
 
         audio_file = st.file_uploader(
             "Upload Audio Response",
             type=["mp3", "wav", "m4a", "ogg"]
         )
 
-        st.markdown("### Written Pedagogical Response")
+        st.markdown("## Written Pedagogical Response")
         written_response = st.text_area(
             "Write a short response of about 150–200 words.",
             height=180
         )
 
-        st.markdown("### Reflection")
+        st.markdown("## Reflection")
         reflection_1 = st.text_area(
-            "Reflection 1: What pedagogical issue, learner difficulty, or misconception did you identify?",
+            "Reflection 1: What pedagogical issue, learner difficulty, error, or misconception did you identify?",
             height=100
         )
 
         reflection_2 = st.text_area(
-            "Reflection 2: What example, activity, or teaching strategy would you use?",
+            "Reflection 2: What example, activity, explanation, or teaching strategy would you use?",
             height=100
         )
 
@@ -414,16 +785,16 @@ elif page == "Activity Submission":
         elif not written_response.strip():
             st.error("Please write the pedagogical response.")
         else:
-            audio_key = f"{student_id}_{task_no}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{audio_file.name}"
+            audio_key = f"{student_id}_{task_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{audio_file.name}"
             st.session_state.audio_files[audio_key] = audio_file.getvalue()
 
             new_row = {
                 "Student_ID": student_id.strip(),
                 "Name": name.strip(),
                 "Semester": semester,
-                "Pedagogy_Subject": pedagogy_subject,
-                "Task_No": task_no,
-                "Prompt_Type": prompt_type,
+                "Pedagogy_Subject": selected_subject,
+                "Task_ID": task_id,
+                "Task_Category": task_category,
                 "Prompt": prompt,
                 "Voice_File_Name": audio_key,
                 "Written_Response": written_response.strip(),
@@ -442,7 +813,6 @@ elif page == "Activity Submission":
 
             st.success("Your response has been submitted successfully.")
             st.balloons()
-
 
 # -------------------------------------------------------
 # Page 3: Upload Existing Data
@@ -510,7 +880,6 @@ elif page == "Upload Existing Data":
         st.success("Sample data loaded successfully.")
         st.dataframe(df, use_container_width=True)
 
-
 # -------------------------------------------------------
 # Page 4: Review Responses
 # -------------------------------------------------------
@@ -532,13 +901,10 @@ elif page == "Review Responses":
         student_df = df[df["Student_ID"] == selected_student].copy()
 
         with col2:
-            task_list = sorted(
-                student_df["Task_No"].dropna().unique(),
-                key=clean_task_order
-            )
-            selected_task = st.selectbox("Select Task", task_list)
+            task_ids = sorted(student_df["Task_ID"].dropna().unique(), key=sort_task_ids)
+            selected_task = st.selectbox("Select Task", task_ids)
 
-        row = student_df[student_df["Task_No"] == selected_task].iloc[0]
+        row = student_df[student_df["Task_ID"] == selected_task].iloc[0]
 
         st.divider()
 
@@ -546,7 +912,7 @@ elif page == "Review Responses":
 
         info_col1, info_col2, info_col3 = st.columns(3)
         info_col1.metric("Subject", row["Pedagogy_Subject"])
-        info_col2.metric("Prompt Type", row["Prompt_Type"])
+        info_col2.metric("Category", row["Task_Category"])
         info_col3.metric("Current Score", f"{row['Total_Score']:.0f}/{MAX_SCORE_PER_TASK}")
 
         st.markdown("### Prompt")
@@ -557,10 +923,9 @@ elif page == "Review Responses":
         audio_name = row["Voice_File_Name"]
 
         if audio_name in st.session_state.audio_files:
-            audio_bytes = st.session_state.audio_files[audio_name]
-            st.audio(audio_bytes)
+            st.audio(st.session_state.audio_files[audio_name])
         else:
-            st.caption("Audio file is not available in this session. If using external data, keep the audio link or file separately.")
+            st.caption("Audio file is not available in this session. For broad use, connect cloud storage.")
 
         st.markdown("### Written Pedagogical Response")
         st.write(row["Written_Response"])
@@ -590,7 +955,6 @@ elif page == "Review Responses":
             st.markdown("### Feedback")
             st.info(row["Feedback"])
 
-
 # -------------------------------------------------------
 # Page 5: Score Responses
 # -------------------------------------------------------
@@ -612,15 +976,12 @@ elif page == "Score Responses":
         student_df = df[df["Student_ID"] == selected_student].copy()
 
         with col2:
-            task_list = sorted(
-                student_df["Task_No"].dropna().unique(),
-                key=clean_task_order
-            )
-            selected_task = st.selectbox("Select Task", task_list)
+            task_ids = sorted(student_df["Task_ID"].dropna().unique(), key=sort_task_ids)
+            selected_task = st.selectbox("Select Task", task_ids)
 
         idx = df[
             (df["Student_ID"] == selected_student) &
-            (df["Task_No"] == selected_task)
+            (df["Task_ID"] == selected_task)
         ].index[0]
 
         row = df.loc[idx]
@@ -638,8 +999,7 @@ elif page == "Score Responses":
             audio_name = row["Voice_File_Name"]
 
             if audio_name in st.session_state.audio_files:
-                audio_bytes = st.session_state.audio_files[audio_name]
-                st.audio(audio_bytes)
+                st.audio(st.session_state.audio_files[audio_name])
             else:
                 st.caption("Audio file is not available in this session.")
 
@@ -694,8 +1054,7 @@ elif page == "Score Responses":
             temp_row = row.copy()
             for col, score in scores.items():
                 temp_row[col] = score
-            suggested_feedback = generate_feedback(temp_row)
-            st.info(suggested_feedback)
+            st.info(generate_feedback(temp_row))
 
         if st.button("Save Scores and Feedback", type="primary"):
             for rubric_col, score in scores.items():
@@ -709,7 +1068,6 @@ elif page == "Score Responses":
             st.success("Scores and feedback saved successfully.")
 
         st.caption("Scoring guide: 1 = Very weak | 2 = Weak | 3 = Moderate | 4 = Good | 5 = Excellent")
-
 
 # -------------------------------------------------------
 # Page 6: Diagnostic Profile
@@ -727,15 +1085,15 @@ elif page == "Diagnostic Profile":
         selected_student = st.selectbox("Select Student ID", student_ids)
 
         student_df = df[df["Student_ID"] == selected_student].copy()
-        student_df = student_df.sort_values("Task_No", key=lambda x: x.map(clean_task_order))
+        student_df = student_df.sort_values("Task_ID", key=lambda x: x.map(sort_task_ids))
 
         st.divider()
 
         st.subheader(f"Diagnostic Profile: {selected_student}")
 
-        name_value = student_df["Name"].iloc[0] if "Name" in student_df.columns else ""
-        semester_value = student_df["Semester"].iloc[0] if "Semester" in student_df.columns else ""
-        subject_value = student_df["Pedagogy_Subject"].iloc[0] if "Pedagogy_Subject" in student_df.columns else ""
+        name_value = student_df["Name"].iloc[0]
+        semester_value = student_df["Semester"].iloc[0]
+        subject_value = student_df["Pedagogy_Subject"].iloc[0]
 
         col1, col2, col3 = st.columns(3)
         col1.metric("Name", name_value if str(name_value).strip() else "Not provided")
@@ -777,7 +1135,7 @@ elif page == "Diagnostic Profile":
 
             fig2, ax2 = plt.subplots(figsize=(8, 4))
 
-            ax2.plot(student_df["Task_No"], student_df["Total_Score"], marker="o")
+            ax2.plot(student_df["Task_ID"], student_df["Total_Score"], marker="o")
             ax2.set_xlabel("Task")
             ax2.set_ylabel("Total Score")
             ax2.set_ylim(0, MAX_SCORE_PER_TASK)
@@ -800,7 +1158,6 @@ elif page == "Diagnostic Profile":
 
         st.markdown("### Submitted Task Data")
         st.dataframe(student_df, use_container_width=True)
-
 
 # -------------------------------------------------------
 # Page 7: Task Analytics
@@ -828,7 +1185,7 @@ elif page == "Task Analytics":
         st.markdown("### Task-wise Mean Score")
 
         task_summary = (
-            df.groupby("Task_No")["Total_Score"]
+            df.groupby(["Task_ID", "Task_Category"])["Total_Score"]
             .agg(["mean", "std", "count"])
             .reset_index()
         )
@@ -842,16 +1199,17 @@ elif page == "Task Analytics":
             inplace=True
         )
 
-        task_summary["Task_Order"] = task_summary["Task_No"].map(clean_task_order)
+        task_summary["Task_Order"] = task_summary["Task_ID"].map(sort_task_ids)
         task_summary = task_summary.sort_values("Task_Order")
 
         st.dataframe(task_summary.drop(columns=["Task_Order"]), use_container_width=True)
 
-        fig, ax = plt.subplots(figsize=(8, 4))
-        ax.bar(task_summary["Task_No"], task_summary["Mean Score"])
+        fig, ax = plt.subplots(figsize=(10, 4))
+        ax.bar(task_summary["Task_ID"], task_summary["Mean Score"])
         ax.set_xlabel("Task")
         ax.set_ylabel("Mean Total Score")
         ax.set_ylim(0, MAX_SCORE_PER_TASK)
+        ax.tick_params(axis="x", rotation=45)
         st.pyplot(fig)
 
         st.markdown("### Dimension-wise Mean Scores")
@@ -868,7 +1226,7 @@ elif page == "Task Analytics":
         ax2.tick_params(axis="x", rotation=75)
         st.pyplot(fig2)
 
-        st.markdown("### Pedagogy Subject-wise Summary")
+        st.markdown("### Subject-wise Summary")
 
         subject_summary = (
             df.groupby("Pedagogy_Subject")["Total_Score"]
@@ -887,18 +1245,36 @@ elif page == "Task Analytics":
 
         st.dataframe(subject_summary, use_container_width=True)
 
+        st.markdown("### Category-wise Summary")
+
+        category_summary = (
+            df.groupby("Task_Category")["Total_Score"]
+            .agg(["mean", "std", "count"])
+            .reset_index()
+        )
+
+        category_summary.rename(
+            columns={
+                "mean": "Mean Score",
+                "std": "SD",
+                "count": "Submissions"
+            },
+            inplace=True
+        )
+
+        st.dataframe(category_summary, use_container_width=True)
+
         st.markdown("### Completion Status")
 
         completion = (
-            df.groupby(["Student_ID", "Name", "Semester", "Pedagogy_Subject"])["Task_No"]
+            df.groupby(["Student_ID", "Name", "Semester", "Pedagogy_Subject"])["Task_ID"]
             .count()
             .reset_index()
         )
 
-        completion.rename(columns={"Task_No": "Tasks_Submitted"}, inplace=True)
+        completion.rename(columns={"Task_ID": "Tasks_Submitted"}, inplace=True)
 
         st.dataframe(completion, use_container_width=True)
-
 
 # -------------------------------------------------------
 # Page 8: Export Data
@@ -939,6 +1315,6 @@ elif page == "Export Data":
         st.dataframe(df, use_container_width=True)
 
         st.warning(
-            "Important: In this testing version, audio files are stored only during the active app session. "
-            "For real data collection, connect the app to cloud storage or ask participants to upload audio through Google Forms/Drive."
+            "Important: In this testing version, uploaded audio files remain available only during the active Streamlit session. "
+            "For real institutional use, connect the app with Google Drive, Firebase, Supabase, or another storage/database system."
         )
